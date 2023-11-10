@@ -5,6 +5,8 @@ import camp.nextstep.edu.missionutils.Console;
 public class InputView {
     private final String askReservationDate = "12월 중 식당 예상 방문 날짜는 언제인가요? (숫자만 입력해주세요!)\n";
     private String errorMsg;
+    private final int IDX_MENU_NAME = 0;
+    private final int IDX_MENU_PRICE = 1;
 
     public int readDate() {
         System.out.print(askReservationDate);
@@ -40,5 +42,19 @@ public class InputView {
         }
 
         return date;
+    }
+
+    public void readMenu() {
+        String inputMenu = Console.readLine();
+        String menuName = inputMenu.split("-")[IDX_MENU_NAME];
+        String price = inputMenu.split("-")[IDX_MENU_PRICE];
+
+        isExistMenu(menuName);
+        validateIsInteger(price);
+    }
+
+    public void isExistMenu(String menuName) {
+        Menu menu = Menu.ROOT;
+        menu.contains(menuName);
     }
 }
