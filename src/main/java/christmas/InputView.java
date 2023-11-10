@@ -10,6 +10,7 @@ public class InputView {
     private String errorMsg;
     private final int IDX_MENU_NAME = 0;
     private final int IDX_MENU_PRICE = 1;
+    private int totalQuantity = 0;
 
     public int readDate() {
         System.out.print(askReservationDate);
@@ -26,10 +27,13 @@ public class InputView {
         return readDate;
     }
 
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
     public void readMenu() {
         System.out.print(askReservationMenuOrder);
         String inputMenu = Console.readLine();
-        System.out.println("inputmenu : " + inputMenu);
         List<String> menuList = null;
         menuList = new ArrayList<String>(List.of(inputMenu.split(",")));
 
@@ -60,6 +64,15 @@ public class InputView {
 
         isExistMenu(menuName);
         validateIsInteger(quantity);
+        validateTotalOrderQuantity();
+    }
+
+    public void validateTotalOrderQuantity() {
+        if ((getTotalQuantity() < 1) || (getTotalQuantity() > 20)) {
+            errorMsg = ErrorMessages.NOT_INCLUDE_ORDER_RANGE.getErrorMsg();
+            totalQuantity = 0;
+            throw new IllegalArgumentException(errorMsg);
+        }
     }
 
     public void isExistMenu(String menuName) {
@@ -71,9 +84,14 @@ public class InputView {
         int inputDate = 0;
         try {
             inputDate = Integer.parseInt(string);
+            totalQuantity += inputDate;
         } catch (NumberFormatException e) {
             errorMsg = ErrorMessages.NOT_NUMBER.getErrorMsg();
             throw new IllegalArgumentException(errorMsg);
+        }
+
+        if (inputDate == 0) {
+            throw new IllegalArgumentException(ErrorMessages.NOT_ALLOW_ZERO.getErrorMsg());
         }
 
         return inputDate;
