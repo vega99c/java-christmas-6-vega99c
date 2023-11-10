@@ -34,7 +34,7 @@ public class InputViewTest {
 
     @Test
     void 입력된주문양식_유효성확인() {
-        String orderInfo = "해산물파스타-1a";
+        String orderInfo = "해산물파스타-1";
         String orderInfo2 = "해산물파스타1a";
         InputView inputView = new InputView();
 
@@ -43,6 +43,18 @@ public class InputViewTest {
 
         assertThatThrownBy(() -> inputView.isValidForm(orderInfo2))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 총_주문갯수확인() {
+        String orderInfo1 = "해산물파스타-2";
+        String orderInfo2 = "제로콜라-7";
+        InputView inputView = new InputView();
+
+        inputView.isValidForm(orderInfo1);
+        inputView.isValidForm(orderInfo2);
+
+        assertThat(inputView.getTotalQuantity()).isEqualTo(9);
     }
 
 }
