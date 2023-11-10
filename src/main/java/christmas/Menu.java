@@ -47,7 +47,6 @@ public enum Menu {
         Menu menuName = Arrays.stream(Menu.values())
                 .filter(menu -> menu.getMenuName().equals(name))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(""));
-
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_EXIST_MATCHED_MENU.getErrorMsg()));
     }
 }
