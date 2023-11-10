@@ -22,4 +22,12 @@ public class InputViewTest {
         assertThatThrownBy(() -> inputView.validateIsCorrectRange(inputDate))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void 입력된메뉴_존재여부확인() {
+        String menuName = "해산물파스타";
+
+        InputView inputView = new InputView();
+        inputView.isExistMenu(menuName);
+    }
 }
