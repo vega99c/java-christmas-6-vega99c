@@ -2,7 +2,10 @@ package christmas;
 
 import camp.nextstep.edu.missionutils.Console;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 public class InputView {
     private final String askReservationDate = "12월 중 식당 예상 방문 날짜는 언제인가요? (숫자만 입력해주세요!)\n";
@@ -11,6 +14,13 @@ public class InputView {
     private final int IDX_MENU_NAME = 0;
     private final int IDX_MENU_PRICE = 1;
     private int totalQuantity = 0;
+    private Hashtable<String, Integer> orderHashTable;
+    private List<String> menuList;
+
+    public InputView() {
+        menuList = new ArrayList<String>();
+        orderHashTable = new Hashtable<>();
+    }
 
     public int readDate() {
         System.out.print(askReservationDate);
@@ -51,6 +61,18 @@ public class InputView {
         }
     }
 
+    public void validateDuplicatedMenu(String menuName, int quantityNumber) {
+        menuList.add(menuName);
+        Set<String> menuSet = new HashSet<>(menuList);
+
+        if (menuSet.size() != menuList.size()) {
+            menuList.clear();
+            throw new IllegalArgumentException(ErrorMessages.INCLUDE_DUPLICATED_MENU.getErrorMsg());
+        }
+
+        orderHashTable.put(menuName, quantityNumber);
+    }
+
     public void isValidForm(String orderInfo) {
         String menuName = "";
         String quantity = "";
@@ -62,9 +84,10 @@ public class InputView {
             throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
         }
 
+        int quantityNumber = validateIsInteger(quantity);
         isExistMenu(menuName);
-        validateIsInteger(quantity);
         validateTotalOrderQuantity();
+        validateDuplicatedMenu(menuName, quantityNumber);
     }
 
     public void validateTotalOrderQuantity() {
