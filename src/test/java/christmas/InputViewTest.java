@@ -57,4 +57,15 @@ public class InputViewTest {
         assertThat(inputView.getTotalQuantity()).isEqualTo(9);
     }
 
+    @Test
+    void 중복메뉴확인() {
+        String orderInfo1 = "해산물파스타-2";
+        String orderInfo2 = "해산물파스타-7";
+        InputView inputView = new InputView();
+
+        inputView.isValidForm(orderInfo1);
+
+        assertThatThrownBy(() -> inputView.isValidForm(orderInfo2))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
