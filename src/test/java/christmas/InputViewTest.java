@@ -68,4 +68,18 @@ public class InputViewTest {
         assertThatThrownBy(() -> inputView.isValidForm(orderInfo2))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void 음료만주문했는지() {
+        String orderInfo1 = "제로콜라-2";
+        String orderInfo2 = "레드와인-3";
+
+        InputView inputView = new InputView();
+
+        inputView.isValidForm(orderInfo1);
+        inputView.isValidForm(orderInfo2);
+
+        assertThatThrownBy(() -> inputView.validateOnlyDrink())
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
