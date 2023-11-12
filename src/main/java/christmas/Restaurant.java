@@ -14,6 +14,7 @@ public class Restaurant {
     private List<String> menuList;
     private int totalQuantity = 0;
     private String errorMsg;
+    private Customer customer;
 
     public Restaurant() {
         menuList = new ArrayList<String>();
@@ -35,6 +36,11 @@ public class Restaurant {
         totalQuantity = 0;
     }
 
+    public void showOrderList() {
+        OutputView outputView = new OutputView();
+        outputView.printCurtomerOrders(customer);
+    }
+
     public void menuOrderStart() {
         String inputMenu = inputView.readMenu();
         List<String> menuList = null;
@@ -47,7 +53,9 @@ public class Restaurant {
             initiateOrderInfo();
             inputView.readMenu();
         }
+        customer = new Customer(orderHashTable);
     }
+
 
     public void isValidForm(String orderInfo) {
         String menuName = "";
