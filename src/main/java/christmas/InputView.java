@@ -34,6 +34,7 @@ public class InputView {
             readDate();
         }
 
+        totalQuantity = 0;
         return readDate;
     }
 
@@ -51,6 +52,7 @@ public class InputView {
             validateMenuOrder(menuList);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
+            initiateOrderInfo();
             readMenu();
         }
     }
@@ -59,18 +61,22 @@ public class InputView {
         for (String order : orderInfos) {
             isValidForm(order);
         }
+
+        validateDuplicatedMenu();
+        validateOnlyDrink();
     }
 
-    public void validateDuplicatedMenu(String menuName, int quantityNumber) {
-        menuList.add(menuName);
+    public void validateDuplicatedMenu() {
         Set<String> menuSet = new HashSet<>(menuList);
 
         if (menuSet.size() != menuList.size()) {
             menuList.clear();
             throw new IllegalArgumentException(ErrorMessages.INCLUDE_DUPLICATED_MENU.getErrorMsg());
         }
+    }
 
-        orderHashTable.put(menuName, quantityNumber);
+    public void initiateOrderInfo() {
+        totalQuantity = 0;
     }
 
     public void isValidForm(String orderInfo) {
@@ -87,7 +93,20 @@ public class InputView {
         int quantityNumber = validateIsInteger(quantity);
         isExistMenu(menuName);
         validateTotalOrderQuantity();
-        validateDuplicatedMenu(menuName, quantityNumber);
+        validateDuplicatedMenu();
+        orderHashTable.put(menuName, quantityNumber);
+    }
+
+    public boolean validateOnlyDrink() {
+        List<String> drinkList = new ArrayList<>(List.of("제로콜라", "레드와인", "샴페인"));
+
+        for (String menu : menuList) {
+            if (!drinkList.contains(menu)) {
+                return false;
+            }
+        }
+        menuList.clear();
+        throw new IllegalArgumentException(ErrorMessages.NOT_ALLOWED_ONLY_DRINK.getErrorMsg());
     }
 
     public void validateTotalOrderQuantity() {
@@ -101,6 +120,7 @@ public class InputView {
     public void isExistMenu(String menuName) {
         Menu menu = Menu.ROOT;
         menu.contains(menuName);
+        menuList.add(menuName);
     }
 
     public int validateIsInteger(String string) {
