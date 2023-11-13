@@ -9,6 +9,7 @@ import java.util.Set;
 public class Restaurant {
     private final int IDX_MENU_NAME = 0;
     private final int IDX_MENU_PRICE = 1;
+    private final int GIFTS_SATISFIED_PRICE = 120000;
     InputView inputView;
     private Hashtable<String, Integer> orderHashTable;
     private List<String> menuList;
@@ -17,6 +18,7 @@ public class Restaurant {
     private Customer customer;
     private Menu menuInfo;
     private int totalPrice;
+
 
     public Restaurant() {
         menuList = new ArrayList<String>();
@@ -171,5 +173,13 @@ public class Restaurant {
 
     public int getTotalPrice() {
         return totalPrice;
+    }
+
+    public boolean isHavingGifts() {
+        if (getTotalPrice() < GIFTS_SATISFIED_PRICE) {
+            return false;
+        }
+
+        return true;
     }
 }
