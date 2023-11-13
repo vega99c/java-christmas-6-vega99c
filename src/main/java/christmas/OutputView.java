@@ -5,13 +5,17 @@ import java.util.Hashtable;
 import java.util.Set;
 
 public class OutputView {
+
     private final String ARARM_ORDER_MENU = "<주문 메뉴>\n";
     private final String TOTAL_PRICE_BEFORE_DISCOUNT_MSG = "<할인 전 총주문 금액>\n";
-    private final String GIVEN_NOTHING = "없음\n";
+    private final String GIVEN_NOTHING = "없음\n\n";
     private final String GIFTS_MSG = "<증정 메뉴>\n";
-    private final String GIVEN_GIFTS_MENU = "샴페인 1개\n";
+    private final String DISCOUNT_HISTORY = "<해택 내역>\n";
+    private final String GIVEN_GIFTS_MENU = "샴페인 1개\n\n";
+    NumberFormat moneyFormat;
 
     public OutputView() {
+        moneyFormat = NumberFormat.getInstance();
     }
 
     public void printCurtomerOrders(Customer customer) {
@@ -27,7 +31,6 @@ public class OutputView {
     }
 
     public void printTotalPriceBeforeDiscount(int totalPrice) {
-        NumberFormat moneyFormat = NumberFormat.getInstance();
 
         System.out.print(TOTAL_PRICE_BEFORE_DISCOUNT_MSG);
         System.out.printf("%s 원\n\n", moneyFormat.format(totalPrice));
@@ -41,5 +44,13 @@ public class OutputView {
     public void isNothingGiven() {
         System.out.print(GIFTS_MSG);
         System.out.print(GIVEN_NOTHING);
+    }
+
+    public void printNoticeDiscountHistory() {
+        System.out.print(DISCOUNT_HISTORY);
+    }
+
+    public void printDiscountApplyHistory(String eventName, int discountPrice) {
+        System.out.printf(eventName, moneyFormat.format(discountPrice));
     }
 }

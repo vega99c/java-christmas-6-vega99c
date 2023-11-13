@@ -7,12 +7,9 @@ public class Customer {
     private Hashtable<String, Integer> myOrder;
     private Hashtable<String, Integer> myDiscounts;
     private int reservationDate;
-    private boolean isChristmasDdayEvent;
-    private boolean isWeekdayEvent;
-    private boolean isWeekendEvent;
-    private boolean isSpcialEvent;
     private int mainMenuCount;
     private int dessertCount;
+    private boolean isGivenGifts;
 
     public Customer() {
         mainMenuCount = 0;
@@ -54,5 +51,25 @@ public class Customer {
 
     public void setReservationDate(int date) {
         reservationDate = date;
+    }
+
+    public int getReservationDate() {
+        return reservationDate;
+    }
+
+    public void setMyDiscounts(String eventName, int discountPrice) {
+        myDiscounts.put(eventName, discountPrice);
+    }
+
+    public Hashtable<String, Integer> getMyDiscounts() {
+        return myDiscounts;
+    }
+
+    public void setGivenGifts(boolean isGiven) {
+        isGivenGifts = isGiven;
+    }
+
+    public boolean getGivenGifts() {
+        return isGivenGifts;
     }
 }
