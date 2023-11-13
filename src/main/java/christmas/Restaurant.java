@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 public class Restaurant {
+    private final int FIRST_DAY = 1;
+    private final int CHRISTMAS_DAY = 25;
     private final int IDX_MENU_NAME = 0;
     private final int IDX_MENU_PRICE = 1;
     private final int GIFTS_SATISFIED_PRICE = 120000;
@@ -14,14 +16,18 @@ public class Restaurant {
     OutputView outputView;
     private Hashtable<String, Integer> orderHashTable;
     private List<String> menuList;
-    private int totalQuantity = 0;
+    private int totalQuantity;
     private String errorMsg;
     private Customer customer;
     private Menu menuInfo;
     private int totalPrice;
-
+    private List<String> mainMenu;
+    private List<String> dessertMenu;
 
     public Restaurant() {
+        totalQuantity = 0;
+        mainMenu = Menu.MAIN.getChildMenu();
+        dessertMenu = Menu.DESSERT.getChildMenu();
         menuList = new ArrayList<String>();
         orderHashTable = new Hashtable<>();
         inputView = new InputView();
@@ -41,6 +47,7 @@ public class Restaurant {
         }
 
         totalQuantity = 0;
+        customer = new Customer(readDate);
     }
 
     public void showOrderList() {
@@ -60,7 +67,6 @@ public class Restaurant {
             inputView.readMenu();
         }
     }
-
 
     public void isValidForm(String orderInfo) {
         String menuName = "";
@@ -113,7 +119,23 @@ public class Restaurant {
 
         validateDuplicatedMenu();
         validateOnlyDrink();
-        customer = new Customer(orderHashTable);
+        customer.setMyOrder(orderHashTable);
+        distinctionMenuCategory();
+    }
+
+    public void distinctionMenuCategory() {
+        Set<String> keySet = customer.getOrderMenuNames();
+        Hashtable<String, Integer> orderTable = customer.getCustomerOrder();
+
+        for (String menuName : keySet) {
+            if (mainMenu.contains(menuName)) {
+                customer.increaseMainMenuCount(orderTable.get(menuName));
+            }
+
+            if (dessertMenu.contains(menuName)) {
+                customer.increaseDessertCount(orderTable.get(menuName));
+            }
+        }
     }
 
     public int validateIsInteger(String string) {
@@ -181,6 +203,7 @@ public class Restaurant {
     public boolean isHavingGifts() {
         if (getTotalPrice() < GIFTS_SATISFIED_PRICE) {
             outputView.isNothingGiven();
+            return false;
         }
 
         outputView.printGiveGifts();
