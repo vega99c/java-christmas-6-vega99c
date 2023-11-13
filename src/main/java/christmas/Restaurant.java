@@ -11,6 +11,7 @@ public class Restaurant {
     private final int IDX_MENU_PRICE = 1;
     private final int GIFTS_SATISFIED_PRICE = 120000;
     InputView inputView;
+    OutputView outputView;
     private Hashtable<String, Integer> orderHashTable;
     private List<String> menuList;
     private int totalQuantity = 0;
@@ -24,6 +25,7 @@ public class Restaurant {
         menuList = new ArrayList<String>();
         orderHashTable = new Hashtable<>();
         inputView = new InputView();
+        outputView = new OutputView();
         menuInfo = Menu.ROOT;
     }
 
@@ -42,7 +44,6 @@ public class Restaurant {
     }
 
     public void showOrderList() {
-        OutputView outputView = new OutputView();
         outputView.printCurtomerOrders(customer);
     }
 
@@ -169,6 +170,8 @@ public class Restaurant {
 
             totalPrice = totalPrice + (menuPrice * menuCount);
         }
+
+        outputView.printTotalPriceBeforeDiscount(totalPrice);
     }
 
     public int getTotalPrice() {
@@ -177,9 +180,10 @@ public class Restaurant {
 
     public boolean isHavingGifts() {
         if (getTotalPrice() < GIFTS_SATISFIED_PRICE) {
-            return false;
+            outputView.isNothingGiven();
         }
 
+        outputView.printGiveGifts();
         return true;
     }
 }
