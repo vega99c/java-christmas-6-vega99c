@@ -14,11 +14,12 @@ public class Customer {
     private int mainMenuCount;
     private int dessertCount;
 
-    public Customer(int date) {
+    public Customer() {
         mainMenuCount = 0;
         dessertCount = 0;
-        reservationDate = date;
+        reservationDate = 0;
         myDiscounts = new Hashtable<>();
+        myOrder = new Hashtable<>();
     }
 
     public void setMyOrder(Hashtable<String, Integer> orders) {
@@ -49,5 +50,9 @@ public class Customer {
 
     public int getDessertMenuCount() {
         return dessertCount;
+    }
+
+    public void setReservationDate(int date) {
+        reservationDate = date;
     }
 }

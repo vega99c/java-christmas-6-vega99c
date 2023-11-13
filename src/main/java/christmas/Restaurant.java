@@ -24,7 +24,8 @@ public class Restaurant {
     private List<String> mainMenu;
     private List<String> dessertMenu;
 
-    public Restaurant() {
+    public Restaurant(Customer newCustomer) {
+        customer = newCustomer;
         totalQuantity = 0;
         mainMenu = Menu.MAIN.getChildMenu();
         dessertMenu = Menu.DESSERT.getChildMenu();
@@ -47,7 +48,7 @@ public class Restaurant {
         }
 
         totalQuantity = 0;
-        customer = new Customer(readDate);
+        customer.setReservationDate(readDate);
     }
 
     public void showOrderList() {
