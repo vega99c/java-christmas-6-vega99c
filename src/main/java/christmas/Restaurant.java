@@ -15,11 +15,14 @@ public class Restaurant {
     private int totalQuantity = 0;
     private String errorMsg;
     private Customer customer;
+    private Menu menuInfo;
+    private int totalPrice;
 
     public Restaurant() {
         menuList = new ArrayList<String>();
         orderHashTable = new Hashtable<>();
         inputView = new InputView();
+        menuInfo = Menu.ROOT;
     }
 
     public void receiptStart() {
@@ -53,7 +56,6 @@ public class Restaurant {
             initiateOrderInfo();
             inputView.readMenu();
         }
-        customer = new Customer(orderHashTable);
     }
 
 
@@ -83,6 +85,7 @@ public class Restaurant {
                 return false;
             }
         }
+
         menuList.clear();
         throw new IllegalArgumentException(ErrorMessages.NOT_ALLOWED_ONLY_DRINK.getErrorMsg());
     }
@@ -107,6 +110,7 @@ public class Restaurant {
 
         validateDuplicatedMenu();
         validateOnlyDrink();
+        customer = new Customer(orderHashTable);
     }
 
     public int validateIsInteger(String string) {
@@ -151,5 +155,21 @@ public class Restaurant {
         Menu menu = Menu.ROOT;
         menu.contains(menuName);
         menuList.add(menuName);
+    }
+
+    public void calculateTotalPrice() {
+        Set<String> keySet = customer.getOrderMenuNames();
+        Hashtable<String, Integer> customerOrder = customer.getCustomerOrder();
+
+        for (String key : keySet) {
+            int menuCount = customerOrder.get(key);
+            int menuPrice = menuInfo.getMenuPrice(key);
+
+            totalPrice = totalPrice + (menuPrice * menuCount);
+        }
+    }
+
+    public int getTotalPrice() {
+        return totalPrice;
     }
 }

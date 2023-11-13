@@ -12,7 +12,7 @@ public enum Menu {
     T_BONE_STAKE("티본스테이크", MAIN, 55000),
     BBQ_RIBS("바비큐립", MAIN, 54000),
     SEAFOOD_PASTA("해산물파스타", MAIN, 35000),
-    CHRISTMAS_PASTA("크리스마스파트다", MAIN, 25000),
+    CHRISTMAS_PASTA("크리스마스파스타", MAIN, 25000),
     DESSERT("디저트", null, 0),
     CHOCO_CAKE("초코케이크", DESSERT, 15000),
     ICE_CREAM("아이스크림", DESSERT, 5000),
@@ -43,10 +43,18 @@ public enum Menu {
         return menuCategory;
     }
 
-    public void contains(String name) {
+    public Menu contains(String name) {
         Menu menuName = Arrays.stream(Menu.values())
                 .filter(menu -> menu.getMenuName().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_EXIST_MATCHED_MENU.getErrorMsg()));
+
+        return menuName;
+    }
+
+    public int getMenuPrice(String name) {
+        Menu menu = contains(name);
+
+        return menu.getPrice();
     }
 }
