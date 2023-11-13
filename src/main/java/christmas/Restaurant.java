@@ -48,6 +48,15 @@ public class Restaurant {
         menuInfo = Menu.ROOT;
     }
 
+    public void runRestaurant() {
+        receiptStart();
+        menuOrderStart();
+        showOrderList();
+        calculateTotalPrice();
+        isHavingGifts();
+        checkWholeEvent();
+    }
+
     public void receiptStart() {
         int readDate = 0;
         String inputDate = inputView.readDate();
