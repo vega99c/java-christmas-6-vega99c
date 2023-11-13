@@ -33,12 +33,12 @@ public class Restaurant {
     private Customer customer;
     private Menu menuInfo;
     private int totalPrice;
+    private int totalDiscountPrice;
     private List<String> mainMenu;
     private List<String> dessertMenu;
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
-        totalQuantity = 0;
         mainMenu = Menu.MAIN.getChildMenu();
         dessertMenu = Menu.DESSERT.getChildMenu();
         menuList = new ArrayList<String>();
@@ -77,7 +77,7 @@ public class Restaurant {
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
             initiateOrderInfo();
-            inputView.readMenu();
+            menuOrderStart();
         }
     }
 
@@ -94,9 +94,11 @@ public class Restaurant {
 
         int quantityNumber = validateIsInteger(quantity);
         isExistMenu(menuName);
-        validateTotalOrderQuantity();
-        validateDuplicatedMenu();
-        orderHashTable.put(menuName, quantityNumber);
+        System.out.println("테스트1");
+        if (validateTotalOrderQuantity()) {
+            orderHashTable.put(menuName, quantityNumber);
+        }
+        System.out.println("테스트2");
     }
 
     public boolean validateOnlyDrink() {
@@ -123,6 +125,8 @@ public class Restaurant {
 
     public void initiateOrderInfo() {
         totalQuantity = 0;
+        orderHashTable.clear();
+        menuList.clear();
     }
 
     public void validateMenuOrder(List<String> orderInfos) {
@@ -130,9 +134,13 @@ public class Restaurant {
             isValidForm(order);
         }
 
+        System.out.println("테스트3");
         validateDuplicatedMenu();
+        System.out.println("테스트4");
         validateOnlyDrink();
+        System.out.println("테스트5");
         customer.setMyOrder(orderHashTable);
+        System.out.println("테스트6");
         distinctionMenuCategory();
     }
 
@@ -181,12 +189,15 @@ public class Restaurant {
         return totalQuantity;
     }
 
-    public void validateTotalOrderQuantity() {
+    public boolean validateTotalOrderQuantity() {
+        System.out.println("총 갯수 : " + totalQuantity);
         if ((getTotalQuantity() < 1) || (getTotalQuantity() > 20)) {
             errorMsg = ErrorMessages.NOT_INCLUDE_ORDER_RANGE.getErrorMsg();
             totalQuantity = 0;
             throw new IllegalArgumentException(errorMsg);
         }
+
+        return true;
     }
 
     public void isExistMenu(String menuName) {
