@@ -95,7 +95,7 @@ public class Restaurant {
 
         if (menuSet.size() != menuList.size()) {
             menuList.clear();
-            throw new IllegalArgumentException(ErrorMessages.INCLUDE_DUPLICATED_MENU.getErrorMsg());
+            throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
         }
     }
 
@@ -124,7 +124,7 @@ public class Restaurant {
         }
 
         if (inputDate == 0) {
-            throw new IllegalArgumentException(ErrorMessages.NOT_ALLOW_ZERO.getErrorMsg());
+            throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
         }
 
         return inputDate;
