@@ -12,7 +12,8 @@ public class RestaurantTest {
     void 총_주문가격확인() {
         List<String> orderList = new ArrayList<>(List.of("티본스테이크-1", "바비큐립-1")); //55,000 + 54,000
 
-        Restaurant restaurant = new Restaurant();
+        Customer customer = new Customer();
+        Restaurant restaurant = new Restaurant(customer);
 
         restaurant.validateMenuOrder(orderList);
         restaurant.calculateTotalPrice();
@@ -24,12 +25,12 @@ public class RestaurantTest {
     void 증정이벤트_해당확인() {
         List<String> orderList = new ArrayList<>(List.of("티본스테이크-4")); //55,000 + 54,000
 
-        Restaurant restaurant = new Restaurant();
+        Customer customer = new Customer();
+        Restaurant restaurant = new Restaurant(customer);
 
         restaurant.validateMenuOrder(orderList);
         restaurant.calculateTotalPrice();
 
         assertThat(restaurant.isHavingGifts()).isEqualTo(true);
     }
-
 }
