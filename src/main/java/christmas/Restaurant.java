@@ -49,9 +49,11 @@ public class Restaurant {
 
     public void receiptStart() {
         int readDate = 0;
+        outputView.printWelcomeMessage(EVENT_MONTH);
         String inputDate = inputView.readDate();
 
         try {
+
             readDate = validateIsInteger(inputDate);
             eventPlan = new EventPlan(EVENT_YEAR, EVENT_MONTH, readDate);
             customer.setReservationDate(readDate);

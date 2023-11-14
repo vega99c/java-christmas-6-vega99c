@@ -12,6 +12,7 @@ public class OutputView {
     private final String GIFTS_MSG = "<증정 메뉴>\n";
     private final String DISCOUNT_HISTORY = "<해택 내역>\n";
     private final String PRIVIEW_MESSAGE = "%d월 %d일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n\n";
+    private final String WELCOME_MESSAGE = "안녕하세요! 우테코 식당 %d월 이벤트 플래너입니다.\n";
     NumberFormat moneyFormat;
 
     public OutputView() {
@@ -59,5 +60,9 @@ public class OutputView {
 
     public void printDiscountApplyHistory(String eventName, int discountPrice) {
         System.out.printf(eventName, moneyFormat.format(discountPrice));
+    }
+
+    public void printWelcomeMessage(int month) {
+        System.out.printf(WELCOME_MESSAGE, month);
     }
 }
