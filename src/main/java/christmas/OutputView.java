@@ -10,11 +10,13 @@ public class OutputView {
     private final String TOTAL_PRICE_BEFORE_DISCOUNT_MSG = "<할인 전 총주문 금액>\n";
     private final String GIVEN_NOTHING = "없음\n\n";
     private final String GIFTS_MSG = "<증정 메뉴>\n";
-    private final String BENEFITS_HISTORY = "<해택 내역>\n";
-    private final String TOTAL_BENEFITS = "<총해택 금액>\n";
+    private final String BENEFITS_HISTORY = "<혜택 내역>";
+    private final String TOTAL_BENEFITS = "<총혜택 금액>\n";
     private final String TOTAL_PRICE_AFTER_DISCOUNT = "<할인 후 예상 결제 금액>\n";
     private final String PRIVIEW_MESSAGE = "%d월 %d일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n\n";
     private final String WELCOME_MESSAGE = "안녕하세요! 우테코 식당 %d월 이벤트 플래너입니다.\n";
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+
     NumberFormat moneyFormat;
 
     public OutputView() {
@@ -49,7 +51,7 @@ public class OutputView {
     }
 
     public void isNoting() {
-        System.out.print(GIVEN_NOTHING);
+        System.out.print(BENEFITS_HISTORY + LINE_SEPARATOR + GIVEN_NOTHING);
     }
 
     public void printNoticeBenefitsHistory() {
