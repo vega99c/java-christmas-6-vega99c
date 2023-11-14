@@ -10,13 +10,16 @@ public class Customer {
     private int mainMenuCount;
     private int dessertCount;
     private boolean isGivenGifts;
-    private int totalDiscount;
+    private int totalBenefits;
+    private int totalPrice;
+    private int totalPriceAfterDiscount;
 
     public Customer() {
+        totalPrice = 0;
         mainMenuCount = 0;
         dessertCount = 0;
         reservationDate = 0;
-        totalDiscount = 0;
+        totalBenefits = 0;
         myDiscounts = new Hashtable<>();
         myOrder = new Hashtable<>();
     }
@@ -75,11 +78,27 @@ public class Customer {
         return isGivenGifts;
     }
 
-    public void setTotalDiscount(int discount) {
-        totalDiscount = discount;
+    public void setTotalBenefits(int benefits) {
+        totalBenefits = benefits;
     }
 
-    public int getTotalDiscount() {
-        return totalDiscount;
+    public int getTotalBenefits() {
+        return totalBenefits;
+    }
+
+    public void setTotalPrice(int price) {
+        totalPrice = price;
+    }
+
+    public int getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPriceAfterDiscount(int totalPrice) {
+        totalPriceAfterDiscount = totalPrice;
+    }
+
+    public int getTotalPriceAfterDiscount() {
+        return totalPriceAfterDiscount;
     }
 }

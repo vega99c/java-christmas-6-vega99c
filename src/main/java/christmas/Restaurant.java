@@ -45,6 +45,7 @@ public class Restaurant {
         calculateTotalPrice();
         isHavingGifts();
         checkWholeEvent();
+        calculateTotalPriceAfterDiscount();
     }
 
     public void receiptStart() {
@@ -202,6 +203,7 @@ public class Restaurant {
             totalPrice = totalPrice + (menuPrice * menuCount);
         }
 
+        customer.setTotalPrice(totalPrice);
         outputView.printTotalPriceBeforeDiscount(totalPrice);
     }
 
@@ -225,23 +227,30 @@ public class Restaurant {
             eventPlan.checkApplyingEvent(customer);
         }
 
-        showDiscountHistory();
-        calculateTotalDiscount();
-        outputView.printTotalDiscount(customer.getTotalDiscount());
+        showBenefitsHistory();
+        calculateTotalBenefits();
+        outputView.printTotalBenefits(customer.getTotalBenefits());
     }
 
-    public void calculateTotalDiscount() {
-        int totalDiscount = 0;
+    public void calculateTotalBenefits() {
+        int totalBenefits = 0;
         Set<String> keySet = customer.getMyDiscounts().keySet();
 
         for (String key : keySet) {
-            totalDiscount += customer.getMyDiscounts().get(key);
+            totalBenefits += customer.getMyDiscounts().get(key);
         }
 
-        customer.setTotalDiscount(totalDiscount);
+        customer.setTotalBenefits(totalBenefits);
     }
 
-    public void showDiscountHistory() {
+    public void calculateTotalPriceAfterDiscount() {
+        int totalPrice = customer.getTotalPrice() - customer.getTotalBenefits();
+        customer.setTotalPriceAfterDiscount(totalPrice);
+
+        outputView.printTotalPriceAfterDiscount(customer.getTotalPriceAfterDiscount());
+    }
+
+    public void showBenefitsHistory() {
         Hashtable<String, Integer> discountHistory = customer.getMyDiscounts();
 
         outputView.printNoticeDiscountHistory();
