@@ -1,7 +1,6 @@
 package christmas;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EventPlan {
@@ -15,15 +14,14 @@ public class EventPlan {
     private final int CHRIST_MAS_BASE_DISCOUNT = 1000;
     private final int SPCIAL_DAY_DISCOUNT = 1000;
     private final int WEEK_DAY_END_BASE_DISCOUNT = 2023;
-    private final int FIRST_DAY = 1;
     private final int CHRISTMAS_DAY = 25;
     private LocalDate reservationDate;
-    private final List<String> weekendList = new ArrayList<>(List.of("FRIDAY", "SATURDAY"));
-    private final List<Integer> specialDayList = new ArrayList<>(List.of(3, 10, 17, 24, 25, 31));
+    private final List<String> weekendList = List.of("FRIDAY", "SATURDAY");
+    private final List<Integer> specialDayList = List.of(3, 10, 17, 24, 25, 31);
     private Customer customer;
     private Menu giftsMenu;
-    private int eventYear = 2023;
-    private int eventMonth = 12;
+    private int eventYear;
+    private int eventMonth;
     private int eventDay = 1;
     private String errorMsg;
 
