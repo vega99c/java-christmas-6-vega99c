@@ -7,23 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 public class Restaurant {
-    private final String CHRIST_MAS_EVENT_MESSAGE = "크리스마스 디데이 할인: -%s원\n";
-    private final String WEEKDAY_EVENT_MESSAGE = "평일 할인: -%s원\n";
-    private final String WEEKEND_EVENT_MESSAGE = "주말 할인: -%s원\n";
-    private final String SPCIAL_EVENT_MESSAGE = "특별 할인: -%s원\n";
-    private final String GIFTS_EVENT_MESSAGE = "증정 이벤트: -%s원\n";
-    private final int CHRIST_MAS_BASE_DISCOUNT = 1000;
-    private final int SPCIAL_DAY_DISCOUNT = 1000;
-    private final int WEEK_DAY_END_BASE_DISCOUNT = 2023;
-    private final int FIRST_DAY = 1;
-    private final int CHRISTMAS_DAY = 25;
+    private final int EVENT_YEAR = 2023;
+    private final int EVENT_MONTH = 12;
     private final int IDX_MENU_NAME = 0;
     private final int IDX_MENU_PRICE = 1;
     private final int GIFTS_SATISFIED_PRICE = 120000;
-    private final List<Integer> weekEndList = new ArrayList<>(List.of(1, 2, 8, 9, 15, 16, 22, 23, 29, 30));
-    private final List<Integer> weekDayList =
-            new ArrayList<>(List.of(3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31));
-    private final List<Integer> spcialDayList = new ArrayList<>(List.of(3, 10, 17, 24, 25, 31));
+    private final int EVENT_LEAST_AMOUNT = 10000;
     InputView inputView;
     OutputView outputView;
     private Hashtable<String, Integer> orderHashTable;
@@ -36,6 +25,7 @@ public class Restaurant {
     private int totalDiscountPrice;
     private List<String> mainMenu;
     private List<String> dessertMenu;
+    private EventPlan eventPlan;
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
@@ -62,18 +52,18 @@ public class Restaurant {
         String inputDate = inputView.readDate();
 
         try {
-            readDate = validateIsCorrectRange(validateIsInteger(inputDate));
+            readDate = validateIsInteger(inputDate);
+            eventPlan = new EventPlan(EVENT_YEAR, EVENT_MONTH, readDate);
+            customer.setReservationDate(readDate);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
-            inputView.readDate();
+            receiptStart();
         }
-
-        totalQuantity = 0;
-        customer.setReservationDate(readDate);
     }
 
     public void showOrderList() {
-        outputView.printCurtomerOrders(customer);
+        outputView.printEventHistoryPreviewMessage(EVENT_MONTH, customer.getReservationDate());
+        outputView.printCustomerOrders(customer);
     }
 
     public void menuOrderStart() {
@@ -90,6 +80,12 @@ public class Restaurant {
         }
     }
 
+    public void initiateOrderInfo() {
+        totalQuantity = 0;
+        orderHashTable.clear();
+        menuList.clear();
+    }
+
     public void isValidForm(String orderInfo) {
         String menuName = "";
         String quantity = "";
@@ -101,13 +97,13 @@ public class Restaurant {
             throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
         }
 
-        int quantityNumber = validateIsInteger(quantity);
         isExistMenu(menuName);
-        System.out.println("테스트1");
+        int quantityNumber = validateIsInteger(quantity);
+        totalQuantity += quantityNumber;
+
         if (validateTotalOrderQuantity()) {
             orderHashTable.put(menuName, quantityNumber);
         }
-        System.out.println("테스트2");
     }
 
     public boolean validateOnlyDrink() {
@@ -132,24 +128,14 @@ public class Restaurant {
         }
     }
 
-    public void initiateOrderInfo() {
-        totalQuantity = 0;
-        orderHashTable.clear();
-        menuList.clear();
-    }
-
     public void validateMenuOrder(List<String> orderInfos) {
         for (String order : orderInfos) {
             isValidForm(order);
         }
 
-        System.out.println("테스트3");
         validateDuplicatedMenu();
-        System.out.println("테스트4");
         validateOnlyDrink();
-        System.out.println("테스트5");
         customer.setMyOrder(orderHashTable);
-        System.out.println("테스트6");
         distinctionMenuCategory();
     }
 
@@ -169,29 +155,19 @@ public class Restaurant {
     }
 
     public int validateIsInteger(String string) {
-        int inputDate = 0;
+        int inputData = 0;
         try {
-            inputDate = Integer.parseInt(string);
-            totalQuantity += inputDate;
+            inputData = Integer.parseInt(string);
         } catch (NumberFormatException e) {
             errorMsg = ErrorMessages.NOT_NUMBER.getErrorMsg();
             throw new IllegalArgumentException(errorMsg);
         }
 
-        if (inputDate == 0) {
+        if (inputData == 0) {
             throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
         }
 
-        return inputDate;
-    }
-
-    public int validateIsCorrectRange(int date) {
-        if (!((date >= 1) && (date <= 31))) {
-            errorMsg = ErrorMessages.INCORRECT_RANGE.getErrorMsg();
-            throw new IllegalArgumentException(errorMsg);
-        }
-
-        return date;
+        return inputData;
     }
 
     public int getTotalQuantity() {
@@ -199,10 +175,8 @@ public class Restaurant {
     }
 
     public boolean validateTotalOrderQuantity() {
-        System.out.println("총 갯수 : " + totalQuantity);
         if ((getTotalQuantity() < 1) || (getTotalQuantity() > 20)) {
             errorMsg = ErrorMessages.NOT_INCLUDE_ORDER_RANGE.getErrorMsg();
-            totalQuantity = 0;
             throw new IllegalArgumentException(errorMsg);
         }
 
@@ -240,16 +214,14 @@ public class Restaurant {
         }
 
         customer.setGivenGifts(true);
-        outputView.printGiveGifts();
+        outputView.printGiveGifts(eventPlan.getGiftsMenuName(), eventPlan.getGiftsCount());
         return true;
     }
 
     public void checkWholeEvent() {
-        checkChristmasDdayEvent();
-        checkWeekdayEvent();
-        checkWeekendEvent();
-        checkSpcialEvent();
-        checkGiftsEvent();
+        if (getTotalPrice() >= EVENT_LEAST_AMOUNT) {
+            eventPlan.checkApplyingEvent(customer);
+        }
 
         showDiscountHistory();
     }
@@ -258,49 +230,13 @@ public class Restaurant {
         Hashtable<String, Integer> discountHistory = customer.getMyDiscounts();
 
         outputView.printNoticeDiscountHistory();
+        if (discountHistory.isEmpty()) {
+            outputView.isNoting();
+            return;
+        }
+
         for (String key : customer.getMyDiscounts().keySet()) {
             outputView.printDiscountApplyHistory(key, discountHistory.get(key));
-        }
-    }
-
-    public void checkChristmasDdayEvent() {
-        if ((customer.getReservationDate() >= FIRST_DAY) && (customer.getReservationDate() <= CHRISTMAS_DAY)) {
-            int discountPrice = CHRIST_MAS_BASE_DISCOUNT + ((customer.getReservationDate() - 1) * 100);
-            customer.setMyDiscounts(CHRIST_MAS_EVENT_MESSAGE, discountPrice);
-        }
-    }
-
-    public void checkWeekdayEvent() {
-        if (customer.getDessertMenuCount() == 0) {
-            return;
-        }
-
-        if (weekDayList.contains(customer.getReservationDate())) {
-            int discountPrice = WEEK_DAY_END_BASE_DISCOUNT * customer.getDessertMenuCount();
-            customer.setMyDiscounts(WEEKDAY_EVENT_MESSAGE, discountPrice);
-        }
-    }
-
-    public void checkWeekendEvent() {
-        if (customer.getMainMenuCount() == 0) {
-            return;
-        }
-
-        if (weekEndList.contains(customer.getReservationDate())) {
-            int discountPrice = WEEK_DAY_END_BASE_DISCOUNT * customer.getMainMenuCount();
-            customer.setMyDiscounts(WEEKEND_EVENT_MESSAGE, discountPrice);
-        }
-    }
-
-    public void checkSpcialEvent() {
-        if (spcialDayList.contains(customer.getReservationDate())) {
-            customer.setMyDiscounts(SPCIAL_EVENT_MESSAGE, SPCIAL_DAY_DISCOUNT);
-        }
-    }
-
-    public void checkGiftsEvent() {
-        if (customer.getGivenGifts()) {
-            customer.setMyDiscounts(GIFTS_EVENT_MESSAGE, 25000);
         }
     }
 }

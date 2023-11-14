@@ -11,14 +11,14 @@ public class OutputView {
     private final String GIVEN_NOTHING = "없음\n\n";
     private final String GIFTS_MSG = "<증정 메뉴>\n";
     private final String DISCOUNT_HISTORY = "<해택 내역>\n";
-    private final String GIVEN_GIFTS_MENU = "샴페인 1개\n\n";
+    private final String PRIVIEW_MESSAGE = "%d월 %d일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n\n";
     NumberFormat moneyFormat;
 
     public OutputView() {
         moneyFormat = NumberFormat.getInstance();
     }
 
-    public void printCurtomerOrders(Customer customer) {
+    public void printCustomerOrders(Customer customer) {
         System.out.print(ARARM_ORDER_MENU);
         Set<String> keySet = customer.getOrderMenuNames();
         Hashtable<String, Integer> customerOrder = customer.getCustomerOrder();
@@ -31,14 +31,13 @@ public class OutputView {
     }
 
     public void printTotalPriceBeforeDiscount(int totalPrice) {
-
         System.out.print(TOTAL_PRICE_BEFORE_DISCOUNT_MSG);
         System.out.printf("%s 원\n\n", moneyFormat.format(totalPrice));
     }
 
-    public void printGiveGifts() {
+    public void printGiveGifts(String menu, int count) {
         System.out.print(GIFTS_MSG);
-        System.out.print(GIVEN_GIFTS_MENU);
+        System.out.print(menu + " " + count + "개\n\n");
     }
 
     public void isNothingGiven() {
@@ -46,8 +45,16 @@ public class OutputView {
         System.out.print(GIVEN_NOTHING);
     }
 
+    public void isNoting() {
+        System.out.print(GIVEN_NOTHING);
+    }
+
     public void printNoticeDiscountHistory() {
         System.out.print(DISCOUNT_HISTORY);
+    }
+
+    public void printEventHistoryPreviewMessage(int month, int day) {
+        System.out.printf(PRIVIEW_MESSAGE, month, day);
     }
 
     public void printDiscountApplyHistory(String eventName, int discountPrice) {
