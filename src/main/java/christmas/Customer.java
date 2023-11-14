@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class Customer {
     private Hashtable<String, Integer> myOrder;
-    private Hashtable<String, Integer> myDiscounts;
+    private Hashtable<String, Integer> myBenefits;
     private int reservationDate;
     private int mainMenuCount;
     private int dessertCount;
@@ -20,7 +20,7 @@ public class Customer {
         dessertCount = 0;
         reservationDate = 0;
         totalBenefits = 0;
-        myDiscounts = new Hashtable<>();
+        myBenefits = new Hashtable<>();
         myOrder = new Hashtable<>();
     }
 
@@ -62,12 +62,12 @@ public class Customer {
         return reservationDate;
     }
 
-    public void setMyDiscounts(String eventName, int discountPrice) {
-        myDiscounts.put(eventName, discountPrice);
+    public void setMyBenefits(String eventName, int discountPrice) {
+        myBenefits.put(eventName, discountPrice);
     }
 
-    public Hashtable<String, Integer> getMyDiscounts() {
-        return myDiscounts;
+    public Hashtable<String, Integer> getMyBenefits() {
+        return myBenefits;
     }
 
     public void setGivenGifts(boolean isGiven) {

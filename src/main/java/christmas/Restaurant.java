@@ -234,10 +234,10 @@ public class Restaurant {
 
     public void calculateTotalBenefits() {
         int totalBenefits = 0;
-        Set<String> keySet = customer.getMyDiscounts().keySet();
+        Set<String> keySet = customer.getMyBenefits().keySet();
 
         for (String key : keySet) {
-            totalBenefits += customer.getMyDiscounts().get(key);
+            totalBenefits += customer.getMyBenefits().get(key);
         }
 
         customer.setTotalBenefits(totalBenefits);
@@ -251,16 +251,16 @@ public class Restaurant {
     }
 
     public void showBenefitsHistory() {
-        Hashtable<String, Integer> discountHistory = customer.getMyDiscounts();
+        Hashtable<String, Integer> benefitsHistory = customer.getMyBenefits();
 
-        outputView.printNoticeDiscountHistory();
-        if (discountHistory.isEmpty()) {
+        outputView.printNoticeBenefitsHistory();
+        if (benefitsHistory.isEmpty()) {
             outputView.isNoting();
             return;
         }
 
-        for (String key : customer.getMyDiscounts().keySet()) {
-            outputView.printDiscountApplyHistory(key, discountHistory.get(key));
+        for (String key : customer.getMyBenefits().keySet()) {
+            outputView.printBenefitsApplyHistory(key, benefitsHistory.get(key));
         }
 
         System.out.print("\n");

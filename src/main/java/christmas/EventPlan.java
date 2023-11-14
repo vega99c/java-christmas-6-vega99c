@@ -60,7 +60,7 @@ public class EventPlan {
 
     public void checkChristmasDdayEvent() {
         if (getDayInt() <= CHRISTMAS_DAY) {
-            customer.setMyDiscounts(CHRIST_MAS_EVENT_MESSAGE,
+            customer.setMyBenefits(CHRIST_MAS_EVENT_MESSAGE,
                     CHRIST_MAS_BASE_DISCOUNT + ((customer.getReservationDate() - 1) * 100));
         }
     }
@@ -76,19 +76,19 @@ public class EventPlan {
 
     public void checkAndSetWeekDiscount(int menuCount, String eventMessage, int discountUnit) {
         if (!(menuCount == 0)) {
-            customer.setMyDiscounts(eventMessage, discountUnit * menuCount);
+            customer.setMyBenefits(eventMessage, discountUnit * menuCount);
         }
     }
 
     public void checkSpecialEvent() {
         if (specialDayList.contains(getDayInt())) {
-            customer.setMyDiscounts(SPCIAL_EVENT_MESSAGE, SPCIAL_DAY_DISCOUNT);
+            customer.setMyBenefits(SPCIAL_EVENT_MESSAGE, SPCIAL_DAY_DISCOUNT);
         }
     }
 
     public void checkGiftsEvent() {
         if (customer.getGivenGifts()) {
-            customer.setMyDiscounts(GIFTS_EVENT_MESSAGE, giftsMenu.getPrice() * GIVEN_GIFTS_COUNT);
+            customer.setMyBenefits(GIFTS_EVENT_MESSAGE, giftsMenu.getPrice() * GIVEN_GIFTS_COUNT);
         }
     }
 
