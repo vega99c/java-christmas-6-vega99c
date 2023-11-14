@@ -15,7 +15,7 @@ public class RestaurantTest {
         Restaurant restaurant = new Restaurant(customer);
         String inputString = "32";
 
-        assertThat(restaurant.validateIsInteger(inputString)).isEqualTo(32);
+        assertThat(restaurant.validateIsInteger(inputString, ErrorMessages.INCORRECT_DATE_RANGE)).isEqualTo(32);
     }
 
     @Test
@@ -116,10 +116,12 @@ public class RestaurantTest {
 
     @Test
     void 증정이벤트_해당확인() {
-        List<String> orderList = new ArrayList<>(List.of("티본스테이크-4")); //55,000 + 54,000
+        List<String> orderList = new ArrayList<>(List.of("티본스테이크-4"));
+        EventPlan plan = new EventPlan(2023, 12, 1);
 
         Customer customer = new Customer();
         Restaurant restaurant = new Restaurant(customer);
+        restaurant.setEventPlan(plan);
 
         restaurant.validateMenuOrder(orderList);
         restaurant.calculateTotalPrice();

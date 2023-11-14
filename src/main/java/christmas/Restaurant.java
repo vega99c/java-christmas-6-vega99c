@@ -39,6 +39,7 @@ public class Restaurant {
     }
 
     public void runRestaurant() {
+        outputView.printWelcomeMessage(EVENT_MONTH);
         receiptStart();
         menuOrderStart();
         showOrderList();
@@ -50,18 +51,20 @@ public class Restaurant {
 
     public void receiptStart() {
         int readDate = 0;
-        outputView.printWelcomeMessage(EVENT_MONTH);
         String inputDate = inputView.readDate();
 
         try {
-
-            readDate = validateIsInteger(inputDate);
+            readDate = validateIsInteger(inputDate, ErrorMessages.INCORRECT_DATE_RANGE);
             eventPlan = new EventPlan(EVENT_YEAR, EVENT_MONTH, readDate);
             customer.setReservationDate(readDate);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
             receiptStart();
         }
+    }
+
+    public void setEventPlan(EventPlan plan) {
+        eventPlan = plan;
     }
 
     public void showOrderList() {
@@ -101,7 +104,7 @@ public class Restaurant {
         }
 
         isExistMenu(menuName);
-        int quantityNumber = validateIsInteger(quantity);
+        int quantityNumber = validateIsInteger(quantity, ErrorMessages.INCORRECT_MENU_ORDER);
         totalQuantity += quantityNumber;
 
         if (validateTotalOrderQuantity()) {
@@ -157,17 +160,17 @@ public class Restaurant {
         }
     }
 
-    public int validateIsInteger(String string) {
+    public int validateIsInteger(String string, ErrorMessages errorType) {
         int inputData = 0;
         try {
             inputData = Integer.parseInt(string);
         } catch (NumberFormatException e) {
-            errorMsg = ErrorMessages.NOT_NUMBER.getErrorMsg();
+            errorMsg = errorType.getErrorMsg();
             throw new IllegalArgumentException(errorMsg);
         }
 
         if (inputData == 0) {
-            throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
+            throw new IllegalArgumentException(errorType.getErrorMsg());
         }
 
         return inputData;
@@ -253,12 +256,12 @@ public class Restaurant {
     public void showBenefitsHistory() {
         Hashtable<String, Integer> benefitsHistory = customer.getMyBenefits();
 
-        outputView.printNoticeBenefitsHistory();
         if (benefitsHistory.isEmpty()) {
             outputView.isNoting();
             return;
         }
 
+        outputView.printNoticeBenefitsHistory();
         for (String key : customer.getMyBenefits().keySet()) {
             outputView.printBenefitsApplyHistory(key, benefitsHistory.get(key));
         }
