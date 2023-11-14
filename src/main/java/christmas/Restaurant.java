@@ -226,6 +226,19 @@ public class Restaurant {
         }
 
         showDiscountHistory();
+        calculateTotalDiscount();
+        outputView.printTotalDiscount(customer.getTotalDiscount());
+    }
+
+    public void calculateTotalDiscount() {
+        int totalDiscount = 0;
+        Set<String> keySet = customer.getMyDiscounts().keySet();
+
+        for (String key : keySet) {
+            totalDiscount += customer.getMyDiscounts().get(key);
+        }
+
+        customer.setTotalDiscount(totalDiscount);
     }
 
     public void showDiscountHistory() {
@@ -240,5 +253,7 @@ public class Restaurant {
         for (String key : customer.getMyDiscounts().keySet()) {
             outputView.printDiscountApplyHistory(key, discountHistory.get(key));
         }
+
+        System.out.print("\n");
     }
 }
