@@ -13,6 +13,7 @@ public class Customer {
     private int totalBenefits;
     private int totalPrice;
     private int totalPriceAfterDiscount;
+    private int totalDiscounts;
 
     public Customer() {
         totalPrice = 0;
@@ -100,5 +101,13 @@ public class Customer {
 
     public int getTotalPriceAfterDiscount() {
         return totalPriceAfterDiscount;
+    }
+
+    public void setTotalDiscounts(int discounts) {
+        totalDiscounts = discounts;
+    }
+
+    public int getTotalDiscounts() {
+        return totalDiscounts;
     }
 }

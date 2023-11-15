@@ -13,6 +13,7 @@ public class Restaurant {
     private final int IDX_MENU_PRICE = 1;
     private final int GIFTS_SATISFIED_PRICE = 120000;
     private final int EVENT_LEAST_AMOUNT = 10000;
+    private final String EXCEPT_BENEFIT = "증정 이벤트";
     InputView inputView;
     OutputView outputView;
     private Hashtable<String, Integer> orderHashTable;
@@ -46,6 +47,7 @@ public class Restaurant {
         calculateTotalPrice();
         isHavingGifts();
         checkWholeEvent();
+        calculateTotalDiscounts();
         calculateTotalPriceAfterDiscount();
     }
 
@@ -246,8 +248,21 @@ public class Restaurant {
         customer.setTotalBenefits(totalBenefits);
     }
 
+    public void calculateTotalDiscounts() {
+        int totalDiscounts = 0;
+        Set<String> keySet = customer.getMyBenefits().keySet();
+
+        for (String key : keySet) {
+            if (!key.contains(EXCEPT_BENEFIT)) {
+                totalDiscounts += customer.getMyBenefits().get(key);
+            }
+        }
+
+        customer.setTotalDiscounts(totalDiscounts);
+    }
+
     public void calculateTotalPriceAfterDiscount() {
-        int totalPrice = customer.getTotalPrice() - customer.getTotalBenefits();
+        int totalPrice = customer.getTotalPrice() - customer.getTotalDiscounts();
         customer.setTotalPriceAfterDiscount(totalPrice);
 
         outputView.printTotalPriceAfterDiscount(customer.getTotalPriceAfterDiscount());
