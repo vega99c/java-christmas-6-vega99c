@@ -75,7 +75,7 @@ public class Restaurant {
         }
     }
 
-    public void showOrderList() {
+    private void showOrderList() {
         outputView.printEventHistoryPreviewMessage(EVENT_MONTH, customer.getReservationDate());
         outputView.printCustomerOrders(customer);
     }
@@ -93,7 +93,7 @@ public class Restaurant {
         }
     }
 
-    public void initiateOrderInfo() {
+    private void initiateOrderInfo() {
         totalQuantity = 0;
         orderHashTable.clear();
         menuList.clear();
@@ -114,7 +114,7 @@ public class Restaurant {
         validateEachMenuQuantity(menuName, validateIsInteger(quantity, ErrorMessages.INCORRECT_MENU_ORDER));
     }
 
-    public void validateEachMenuQuantity(String menuName, int quantity) {
+    private void validateEachMenuQuantity(String menuName, int quantity) {
         totalQuantity += quantity;
 
         if (validateTotalOrderQuantity()) {
@@ -135,7 +135,7 @@ public class Restaurant {
         throw new IllegalArgumentException(ErrorMessages.NOT_ALLOWED_ONLY_DRINK.getErrorMsg());
     }
 
-    public void validateDuplicatedMenu() {
+    private void validateDuplicatedMenu() {
         Set<String> menuSet = new HashSet<>(menuList);
 
         if (menuSet.size() != menuList.size()) {
@@ -155,7 +155,7 @@ public class Restaurant {
         distinctionMenuCategory();
     }
 
-    public void distinctionMenuCategory() {
+    private void distinctionMenuCategory() {
         Set<String> keySet = customer.getOrderMenuNames();
         Hashtable<String, Integer> orderTable = customer.getCustomerOrder();
 
@@ -190,7 +190,7 @@ public class Restaurant {
         return totalQuantity;
     }
 
-    public boolean validateTotalOrderQuantity() {
+    private boolean validateTotalOrderQuantity() {
         if ((getTotalQuantity() < MIN_ORDER_QUANTITY) || (getTotalQuantity() > MAX_ORDER_QUANTITY)) {
             errorMsg = ErrorMessages.NOT_INCLUDE_ORDER_RANGE.getErrorMsg();
             throw new IllegalArgumentException(errorMsg);
@@ -236,7 +236,7 @@ public class Restaurant {
         return true;
     }
 
-    public void checkWholeEvent() {
+    private void checkWholeEvent() {
         if (getTotalPrice() >= EVENT_LEAST_AMOUNT) {
             eventPlan.checkApplyingEvent();
         }
@@ -246,7 +246,7 @@ public class Restaurant {
         outputView.printTotalBenefits(customer.getTotalBenefits());
     }
 
-    public void calculateTotalBenefits() {
+    private void calculateTotalBenefits() {
         int totalBenefits = 0;
         Set<String> keySet = customer.getMyBenefits().keySet();
 
@@ -258,7 +258,7 @@ public class Restaurant {
         eventPlan.checkBadgeEvent();
     }
 
-    public void calculateTotalDiscounts() {
+    private void calculateTotalDiscounts() {
         int totalDiscounts = 0;
         Set<String> keySet = customer.getMyBenefits().keySet();
 
@@ -271,7 +271,7 @@ public class Restaurant {
         customer.setTotalDiscounts(totalDiscounts);
     }
 
-    public void calculateTotalPriceAfterDiscount() {
+    private void calculateTotalPriceAfterDiscount() {
         int totalPrice = customer.getTotalPrice() - customer.getTotalDiscounts();
         customer.setTotalPriceAfterDiscount(totalPrice);
 
@@ -282,7 +282,7 @@ public class Restaurant {
         outputView.printEventBadge(EVENT_MONTH, customer.getEventBadge());
     }
 
-    public void showBenefitsHistory() {
+    private void showBenefitsHistory() {
         Hashtable<String, Integer> benefitsHistory = customer.getMyBenefits();
 
         if (benefitsHistory.isEmpty()) {

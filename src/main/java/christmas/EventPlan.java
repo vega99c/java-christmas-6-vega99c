@@ -37,10 +37,6 @@ public class EventPlan {
         reservationDate = LocalDate.of(eventYear, eventMonth, eventDay);
     }
 
-    public LocalDate getLocalDate() {
-        return reservationDate;
-    }
-
     public int getLastDay() {
         return LocalDate.of(eventYear, eventMonth, eventDay).lengthOfMonth();
     }
@@ -60,14 +56,14 @@ public class EventPlan {
         checkGiftsEvent();
     }
 
-    public void checkChristmasDdayEvent() {
+    private void checkChristmasDdayEvent() {
         if (getDayInt() <= CHRISTMAS_DAY) {
             customer.setMyBenefits(CHRIST_MAS_EVENT_MESSAGE,
                     CHRIST_MAS_BASE_DISCOUNT + ((customer.getReservationDate() - 1) * 100));
         }
     }
 
-    public void checkWeekEvent() {
+    private void checkWeekEvent() {
         if (!weekendList.contains(getDayString())) {
             checkAndSetWeekDiscount(customer.getDessertMenuCount(), WEEKDAY_EVENT_MESSAGE, WEEK_DAY_END_BASE_DISCOUNT);
             return;
@@ -82,13 +78,13 @@ public class EventPlan {
         }
     }
 
-    public void checkSpecialEvent() {
+    private void checkSpecialEvent() {
         if (specialDayList.contains(getDayInt())) {
             customer.setMyBenefits(SPCIAL_EVENT_MESSAGE, SPCIAL_DAY_DISCOUNT);
         }
     }
 
-    public void checkGiftsEvent() {
+    private void checkGiftsEvent() {
         if (customer.getGivenGifts()) {
             customer.setMyBenefits(GIFTS_EVENT_MESSAGE, giftsMenu.getPrice() * GIVEN_GIFTS_COUNT);
         }
