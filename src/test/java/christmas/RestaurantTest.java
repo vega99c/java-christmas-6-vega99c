@@ -37,7 +37,7 @@ public class RestaurantTest {
         Customer customer = new Customer();
         Restaurant restaurant = new Restaurant(customer);
 
-        restaurant.isExistMenu(menuName);
+        restaurant.addOrderMenu(menuName);
     }
 
     @Test
@@ -116,34 +116,73 @@ public class RestaurantTest {
 
     @Test
     void 증정이벤트_해당확인() {
-        List<String> orderList = new ArrayList<>(List.of("티본스테이크-4"));
-        EventPlan plan = new EventPlan(2023, 12, 1);
-
+        String orders = "티본스테이크-3,제로콜라-3";
         Customer customer = new Customer();
         Restaurant restaurant = new Restaurant(customer);
-        restaurant.setEventPlan(plan);
 
-        restaurant.validateMenuOrder(orderList);
-        restaurant.calculateTotalPrice();
+        restaurant.receiptStart("3");
+        restaurant.proceedOrderFlow(orders);
+        restaurant.proceedCalculatePriceAndDiscount();
+        restaurant.showCustomersEventBadge();
 
         assertThat(restaurant.isHavingGifts()).isEqualTo(true);
     }
 
     @Test
     void 날짜이벤트_해당확인() {
-        List<String> orderList = new ArrayList<>(List.of("티본스테이크-3"));
-        EventPlan plan = new EventPlan(2023, 12, 3);
+        String orders = "티본스테이크-3,제로콜라-3";
         Customer customer = new Customer();
         Restaurant restaurant = new Restaurant(customer);
-        plan.setCustomer(customer);
-        customer.setReservationDate(3);
 
-        restaurant.setEventPlan(plan);
-        restaurant.validateMenuOrder(orderList);
-        restaurant.calculateTotalPrice();
-        restaurant.checkWholeEvent();
+        restaurant.receiptStart("3");
+        restaurant.proceedOrderFlow(orders);
+        restaurant.proceedCalculatePriceAndDiscount();
+        restaurant.showCustomersEventBadge();
 
         assertThat(customer.getMyBenefits().keySet()).contains("특별 할인: -%s원\n");
         assertThat(customer.getMyBenefits().keySet()).contains("크리스마스 디데이 할인: -%s원\n");
+    }
+
+
+    @Test
+    void 총혜택금액_확인() {
+        String orders = "티본스테이크-3,제로콜라-3";
+        Customer customer = new Customer();
+        Restaurant restaurant = new Restaurant(customer);
+
+        restaurant.receiptStart("3");
+        restaurant.proceedOrderFlow(orders);
+        restaurant.proceedCalculatePriceAndDiscount();
+        restaurant.showCustomersEventBadge();
+
+        assertThat(customer.getTotalBenefits()).isEqualTo(27200);
+    }
+
+    @Test
+    void 최종결제금액_확인() {
+        String orders = "티본스테이크-3,제로콜라-3";
+        Customer customer = new Customer();
+        Restaurant restaurant = new Restaurant(customer);
+
+        restaurant.receiptStart("3");
+        restaurant.proceedOrderFlow(orders);
+        restaurant.proceedCalculatePriceAndDiscount();
+        restaurant.showCustomersEventBadge();
+
+        assertThat(customer.getTotalPriceAfterDiscount()).isEqualTo(171800);
+    }
+
+    @Test
+    void 이벤트배지_발급확인() {
+        String orders = "티본스테이크-3,제로콜라-3";
+        Customer customer = new Customer();
+        Restaurant restaurant = new Restaurant(customer);
+
+        restaurant.receiptStart("3");
+        restaurant.proceedOrderFlow(orders);
+        restaurant.proceedCalculatePriceAndDiscount();
+        restaurant.showCustomersEventBadge();
+
+        assertThat(customer.getEventBadge()).isEqualTo("산타");
     }
 }
