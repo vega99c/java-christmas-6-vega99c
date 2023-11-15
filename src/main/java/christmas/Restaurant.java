@@ -49,6 +49,7 @@ public class Restaurant {
         checkWholeEvent();
         calculateTotalDiscounts();
         calculateTotalPriceAfterDiscount();
+        showCustomersEventBadge();
     }
 
     public void receiptStart() {
@@ -59,6 +60,7 @@ public class Restaurant {
             readDate = validateIsInteger(inputDate, ErrorMessages.INCORRECT_DATE_RANGE);
             eventPlan = new EventPlan(EVENT_YEAR, EVENT_MONTH, readDate);
             customer.setReservationDate(readDate);
+            eventPlan.setCustomer(customer);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
             receiptStart();
@@ -229,7 +231,7 @@ public class Restaurant {
 
     public void checkWholeEvent() {
         if (getTotalPrice() >= EVENT_LEAST_AMOUNT) {
-            eventPlan.checkApplyingEvent(customer);
+            eventPlan.checkApplyingEvent();
         }
 
         showBenefitsHistory();
@@ -246,6 +248,7 @@ public class Restaurant {
         }
 
         customer.setTotalBenefits(totalBenefits);
+        eventPlan.checkBadgeEvent();
     }
 
     public void calculateTotalDiscounts() {
@@ -266,6 +269,10 @@ public class Restaurant {
         customer.setTotalPriceAfterDiscount(totalPrice);
 
         outputView.printTotalPriceAfterDiscount(customer.getTotalPriceAfterDiscount());
+    }
+
+    public void showCustomersEventBadge() {
+        outputView.printEventBadge(EVENT_MONTH, customer.getEventBadge());
     }
 
     public void showBenefitsHistory() {

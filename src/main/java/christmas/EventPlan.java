@@ -1,6 +1,7 @@
 package christmas;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 public class EventPlan {
@@ -10,6 +11,7 @@ public class EventPlan {
     private final String SPCIAL_EVENT_MESSAGE = "특별 할인: -%s원\n";
     private final String GIFTS_EVENT_MESSAGE = "증정 이벤트: -%s원\n";
     private final String GIVEN_GIFTS_MENU = "샴페인";
+    private final String NONE_VALUE = "없음";
     private final int GIVEN_GIFTS_COUNT = 1;
     private final int CHRIST_MAS_BASE_DISCOUNT = 1000;
     private final int SPCIAL_DAY_DISCOUNT = 1000;
@@ -50,8 +52,7 @@ public class EventPlan {
         return reservationDate.getDayOfMonth();
     }
 
-    public void checkApplyingEvent(Customer customerArg) {
-        this.customer = customerArg;
+    public void checkApplyingEvent() {
         checkChristmasDdayEvent();
         checkWeekEvent();
         checkSpecialEvent();
@@ -107,5 +108,22 @@ public class EventPlan {
         }
 
         return true;
+    }
+
+    public void checkBadgeEvent() {
+        List<EventBadge> badges = Arrays.stream(EventBadge.values()).toList();
+
+        for (EventBadge badge : badges) {
+            if (customer.getTotalBenefits() >= badge.getBenefitsCondition()) {
+                customer.setEventBadge(badge.getBadgeName());
+                return;
+            }
+        }
+
+        customer.setEventBadge(NONE_VALUE);
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

@@ -14,6 +14,7 @@ public class Customer {
     private int totalPrice;
     private int totalPriceAfterDiscount;
     private int totalDiscounts;
+    private String eventBadge;
 
     public Customer() {
         totalPrice = 0;
@@ -109,5 +110,13 @@ public class Customer {
 
     public int getTotalDiscounts() {
         return totalDiscounts;
+    }
+
+    public void setEventBadge(String badgeName) {
+        eventBadge = badgeName;
+    }
+
+    public String getEventBadge() {
+        return eventBadge;
     }
 }

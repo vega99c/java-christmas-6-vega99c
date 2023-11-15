@@ -12,9 +12,11 @@ public class OutputView {
     private final String GIFTS_MSG = "<증정 메뉴>\n";
     private final String BENEFITS_HISTORY = "<혜택 내역>";
     private final String TOTAL_BENEFITS = "<총혜택 금액>\n";
+    private final String EVENT_BADGE_MESSAGE = "<%d월 이벤트 배지>";
     private final String TOTAL_PRICE_AFTER_DISCOUNT = "<할인 후 예상 결제 금액>\n";
     private final String PRIVIEW_MESSAGE = "%d월 %d일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n\n";
     private final String WELCOME_MESSAGE = "안녕하세요! 우테코 식당 %d월 이벤트 플래너입니다.\n";
+    private final String MINUS_MARK = "-";
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     NumberFormat moneyFormat;
@@ -37,7 +39,7 @@ public class OutputView {
 
     public void printTotalPriceBeforeDiscount(int totalPrice) {
         System.out.print(TOTAL_PRICE_BEFORE_DISCOUNT_MSG);
-        System.out.printf("%s 원\n\n", moneyFormat.format(totalPrice));
+        System.out.printf("%s원\n\n", moneyFormat.format(totalPrice));
     }
 
     public void printGiveGifts(String menu, int count) {
@@ -72,11 +74,20 @@ public class OutputView {
 
     public void printTotalBenefits(int totalBenefits) {
         System.out.print(TOTAL_BENEFITS);
-        System.out.printf("-%s원\n\n", moneyFormat.format(totalBenefits));
+        if (totalBenefits != 0) {
+            System.out.printf("%s%s원\n\n", MINUS_MARK, moneyFormat.format(totalBenefits));
+            return;
+        }
+
+        System.out.printf("%s원\n\n", moneyFormat.format(totalBenefits));
     }
 
     public void printTotalPriceAfterDiscount(int totalPrice) {
         System.out.print(TOTAL_PRICE_AFTER_DISCOUNT);
-        System.out.printf("%s원", moneyFormat.format(totalPrice));
+        System.out.printf("%s원" + LINE_SEPARATOR + LINE_SEPARATOR, moneyFormat.format(totalPrice));
+    }
+
+    public void printEventBadge(int eventMonth, String badgeName) {
+        System.out.printf(EVENT_BADGE_MESSAGE + LINE_SEPARATOR + badgeName, eventMonth);
     }
 }
