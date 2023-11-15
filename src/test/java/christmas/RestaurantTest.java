@@ -128,4 +128,22 @@ public class RestaurantTest {
 
         assertThat(restaurant.isHavingGifts()).isEqualTo(true);
     }
+
+    @Test
+    void 날짜이벤트_해당확인() {
+        List<String> orderList = new ArrayList<>(List.of("티본스테이크-3"));
+        EventPlan plan = new EventPlan(2023, 12, 3);
+        Customer customer = new Customer();
+        Restaurant restaurant = new Restaurant(customer);
+        plan.setCustomer(customer);
+        customer.setReservationDate(3);
+
+        restaurant.setEventPlan(plan);
+        restaurant.validateMenuOrder(orderList);
+        restaurant.calculateTotalPrice();
+        restaurant.checkWholeEvent();
+
+        assertThat(customer.getMyBenefits().keySet()).contains("특별 할인: -%s원\n");
+        assertThat(customer.getMyBenefits().keySet()).contains("크리스마스 디데이 할인: -%s원\n");
+    }
 }
