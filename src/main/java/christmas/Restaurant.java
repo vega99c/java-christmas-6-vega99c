@@ -13,6 +13,8 @@ public class Restaurant {
     private final int IDX_MENU_PRICE = 1;
     private final int GIFTS_SATISFIED_PRICE = 120000;
     private final int EVENT_LEAST_AMOUNT = 10000;
+    private final int MIN_ORDER_QUANTITY = 1;
+    private final int MAX_ORDER_QUANTITY = 20;
     private final String EXCEPT_BENEFIT = "증정 이벤트";
     InputView inputView;
     OutputView outputView;
@@ -23,10 +25,10 @@ public class Restaurant {
     private Customer customer;
     private Menu menuInfo;
     private int totalPrice;
-    private int totalDiscountPrice;
     private List<String> mainMenu;
     private List<String> dessertMenu;
     private EventPlan eventPlan;
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
@@ -41,20 +43,26 @@ public class Restaurant {
 
     public void runRestaurant() {
         outputView.printWelcomeMessage(EVENT_MONTH);
-        receiptStart();
-        menuOrderStart();
-        showOrderList();
-        calculateTotalPrice();
-        isHavingGifts();
-        checkWholeEvent();
-        calculateTotalDiscounts();
-        calculateTotalPriceAfterDiscount();
+        receiptStart(inputView.readDate());
+        proceedOrderFlow(inputView.readMenu());
+        proceedCalculatePriceAndDiscount();
         showCustomersEventBadge();
     }
 
-    public void receiptStart() {
+    public void proceedCalculatePriceAndDiscount() {
+        calculateTotalPrice();
+        checkWholeEvent();
+        calculateTotalDiscounts();
+        calculateTotalPriceAfterDiscount();
+    }
+
+    public void proceedOrderFlow(String inputMenu) {
+        menuOrderStart(inputMenu);
+        showOrderList();
+    }
+
+    public void receiptStart(String inputDate) {
         int readDate = 0;
-        String inputDate = inputView.readDate();
 
         try {
             readDate = validateIsInteger(inputDate, ErrorMessages.INCORRECT_DATE_RANGE);
@@ -63,12 +71,8 @@ public class Restaurant {
             eventPlan.setCustomer(customer);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
-            receiptStart();
+            receiptStart(inputView.readDate());
         }
-    }
-
-    public void setEventPlan(EventPlan plan) {
-        eventPlan = plan;
     }
 
     public void showOrderList() {
@@ -76,8 +80,7 @@ public class Restaurant {
         outputView.printCustomerOrders(customer);
     }
 
-    public void menuOrderStart() {
-        String inputMenu = inputView.readMenu();
+    public void menuOrderStart(String inputMenu) {
         List<String> menuList = null;
         menuList = new ArrayList<String>(List.of(inputMenu.split(",")));
 
@@ -86,7 +89,7 @@ public class Restaurant {
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
             initiateOrderInfo();
-            menuOrderStart();
+            menuOrderStart(inputView.readMenu());
         }
     }
 
@@ -107,17 +110,20 @@ public class Restaurant {
             throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
         }
 
-        isExistMenu(menuName);
-        int quantityNumber = validateIsInteger(quantity, ErrorMessages.INCORRECT_MENU_ORDER);
-        totalQuantity += quantityNumber;
+        addOrderMenu(menuName);
+        validateEachMenuQuantity(menuName, validateIsInteger(quantity, ErrorMessages.INCORRECT_MENU_ORDER));
+    }
+
+    public void validateEachMenuQuantity(String menuName, int quantity) {
+        totalQuantity += quantity;
 
         if (validateTotalOrderQuantity()) {
-            orderHashTable.put(menuName, quantityNumber);
+            orderHashTable.put(menuName, quantity);
         }
     }
 
     public boolean validateOnlyDrink() {
-        List<String> drinkList = new ArrayList<>(List.of("제로콜라", "레드와인", "샴페인"));
+        List<String> drinkList = Menu.DRINK.getChildMenu();
 
         for (String menu : menuList) {
             if (!drinkList.contains(menu)) {
@@ -185,7 +191,7 @@ public class Restaurant {
     }
 
     public boolean validateTotalOrderQuantity() {
-        if ((getTotalQuantity() < 1) || (getTotalQuantity() > 20)) {
+        if ((getTotalQuantity() < MIN_ORDER_QUANTITY) || (getTotalQuantity() > MAX_ORDER_QUANTITY)) {
             errorMsg = ErrorMessages.NOT_INCLUDE_ORDER_RANGE.getErrorMsg();
             throw new IllegalArgumentException(errorMsg);
         }
@@ -193,7 +199,7 @@ public class Restaurant {
         return true;
     }
 
-    public void isExistMenu(String menuName) {
+    public void addOrderMenu(String menuName) {
         Menu menu = Menu.ROOT;
         menu.contains(menuName);
         menuList.add(menuName);
@@ -212,6 +218,7 @@ public class Restaurant {
 
         customer.setTotalPrice(totalPrice);
         outputView.printTotalPriceBeforeDiscount(totalPrice);
+        isHavingGifts();
     }
 
     public int getTotalPrice() {
@@ -288,6 +295,6 @@ public class Restaurant {
             outputView.printBenefitsApplyHistory(key, benefitsHistory.get(key));
         }
 
-        System.out.print("\n");
+        System.out.print(LINE_SEPARATOR);
     }
 }
