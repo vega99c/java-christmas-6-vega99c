@@ -5,11 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EventPlan {
-    private final String CHRIST_MAS_EVENT_MESSAGE = "크리스마스 디데이 할인: -%s원\n";
-    private final String WEEKDAY_EVENT_MESSAGE = "평일 할인: -%s원\n";
-    private final String WEEKEND_EVENT_MESSAGE = "주말 할인: -%s원\n";
-    private final String SPCIAL_EVENT_MESSAGE = "특별 할인: -%s원\n";
-    private final String GIFTS_EVENT_MESSAGE = "증정 이벤트: -%s원\n";
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+    private final String CHRIST_MAS_EVENT_MESSAGE = "크리스마스 디데이 할인: -%s원" + LINE_SEPARATOR;
+    private final String WEEKDAY_EVENT_MESSAGE = "평일 할인: -%s원" + LINE_SEPARATOR;
+    private final String WEEKEND_EVENT_MESSAGE = "주말 할인: -%s원" + LINE_SEPARATOR;
+    private final String SPCIAL_EVENT_MESSAGE = "특별 할인: -%s원" + LINE_SEPARATOR;
+    private final String GIFTS_EVENT_MESSAGE = "증정 이벤트: -%s원" + LINE_SEPARATOR;
     private final String GIVEN_GIFTS_MENU = "샴페인";
     private final String NONE_VALUE = "없음";
     private final int GIVEN_GIFTS_COUNT = 1;
