@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 
 public class RestaurantTest {
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+
     @Test
     void 날짜입력값_숫자확인() {
         Customer customer = new Customer();
@@ -139,8 +141,8 @@ public class RestaurantTest {
         restaurant.proceedCalculatePriceAndDiscount();
         restaurant.showCustomersEventBadge();
 
-        assertThat(customer.getMyBenefits().keySet()).contains("특별 할인: -%s원\n");
-        assertThat(customer.getMyBenefits().keySet()).contains("크리스마스 디데이 할인: -%s원\n");
+        assertThat(customer.getMyBenefits().keySet()).contains("특별 할인: -%s원" + LINE_SEPARATOR);
+        assertThat(customer.getMyBenefits().keySet()).contains("크리스마스 디데이 할인: -%s원" + LINE_SEPARATOR);
     }
 
 
