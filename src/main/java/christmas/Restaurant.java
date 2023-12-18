@@ -1,5 +1,11 @@
 package christmas;
 
+//import static christmas.validation.OrderValidator.validateMenuIsExist;
+//import static christmas.validation.OrderValidator.validateOrderForm;
+
+
+import christmas.validation.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -99,60 +105,46 @@ public class Restaurant {
         menuList.clear();
     }
 
+    //완
     public void isValidForm(String orderInfo) {
-        String menuName = "";
-        String quantity = "";
 
-        try {
-            menuName = orderInfo.split("-")[IDX_MENU_NAME];
-            quantity = orderInfo.split("-")[IDX_MENU_PRICE];
-        } catch (ArrayIndexOutOfBoundsException error) {
-            throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
-        }
-
-        addOrderMenu(menuName);
-        validateEachMenuQuantity(menuName, validateIsInteger(quantity, ErrorMessages.INCORRECT_MENU_ORDER));
     }
 
-    private void validateEachMenuQuantity(String menuName, int quantity) {
-        totalQuantity += quantity;
+//    public void addOrderMenu(String menuName) {
+//        Menu menu = Menu.ROOT;
+//        menu.contains(menuName);
+//        menuList.add(menuName);
+//    }
 
-        if (validateTotalOrderQuantity()) {
-            orderHashTable.put(menuName, quantity);
-        }
-    }
-
-    public boolean validateOnlyDrink() {
-        List<String> drinkList = Menu.DRINK.getChildMenu();
-
-        for (String menu : menuList) {
-            if (!drinkList.contains(menu)) {
-                return false;
-            }
-        }
-
-        menuList.clear();
-        throw new IllegalArgumentException(ErrorMessages.NOT_ALLOWED_ONLY_DRINK.getErrorMsg());
-    }
-
-    private void validateDuplicatedMenu() {
-        Set<String> menuSet = new HashSet<>(menuList);
-
-        if (menuSet.size() != menuList.size()) {
-            menuList.clear();
-            throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
-        }
-    }
 
     public void validateMenuOrder(List<String> orderInfos) {
         for (String order : orderInfos) {
             isValidForm(order);
         }
+        
+//        validateOnlyDrink();
+        OrderValidator.validateMenuOnlyDrink(menuList);
 
-        validateDuplicatedMenu();
-        validateOnlyDrink();
         customer.setMyOrder(orderHashTable);
         distinctionMenuCategory();
+    }
+
+    //완
+    public int validateIsInteger(String string, ErrorMessages errorType) {
+        int inputData = 0;
+        try {
+            inputData = Integer.parseInt(string);
+        } catch (IllegalArgumentException e) {
+            errorMsg = errorType.getErrorMsg();
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        //완
+        if (inputData == 0) {
+            throw new IllegalArgumentException(errorType.getErrorMsg());
+        }
+
+        return inputData;
     }
 
     private void distinctionMenuCategory() {
@@ -170,40 +162,10 @@ public class Restaurant {
         }
     }
 
-    public int validateIsInteger(String string, ErrorMessages errorType) {
-        int inputData = 0;
-        try {
-            inputData = Integer.parseInt(string);
-        } catch (NumberFormatException e) {
-            errorMsg = errorType.getErrorMsg();
-            throw new IllegalArgumentException(errorMsg);
-        }
-
-        if (inputData == 0) {
-            throw new IllegalArgumentException(errorType.getErrorMsg());
-        }
-
-        return inputData;
-    }
-
     public int getTotalQuantity() {
         return totalQuantity;
     }
 
-    private boolean validateTotalOrderQuantity() {
-        if ((getTotalQuantity() < MIN_ORDER_QUANTITY) || (getTotalQuantity() > MAX_ORDER_QUANTITY)) {
-            errorMsg = ErrorMessages.NOT_INCLUDE_ORDER_RANGE.getErrorMsg();
-            throw new IllegalArgumentException(errorMsg);
-        }
-
-        return true;
-    }
-
-    public void addOrderMenu(String menuName) {
-        Menu menu = Menu.ROOT;
-        menu.contains(menuName);
-        menuList.add(menuName);
-    }
 
     public void calculateTotalPrice() {
         Set<String> keySet = customer.getOrderMenuNames();
