@@ -2,7 +2,6 @@ package christmas.validation;
 
 import christmas.Menu;
 import christmas.exception.OrderMenuException;
-import com.sun.nio.sctp.IllegalReceiveException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class OrderValidator {
     public static void validateMenuExist(String menuName) {
         try {
             Menu.ROOT.contains(menuName);
-        } catch (IllegalReceiveException exception) {
+        } catch (IllegalArgumentException exception) {
             throw new OrderMenuException();
         }
     }

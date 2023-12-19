@@ -1,30 +1,19 @@
 package christmas;
 
-//import static christmas.validation.OrderValidator.validateMenuIsExist;
-//import static christmas.validation.OrderValidator.validateOrderForm;
-
-
-import christmas.domain.reservation.OrderMenu;
 import christmas.domain.reservation.OrderMenuParser;
-import christmas.validation.*;
+import christmas.domain.reservation.VisitDate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import static christmas.EventPlan.EVENT_YEAR;
+import static christmas.EventPlan.EVENT_MONTH;
+
 public class Restaurant {
-    private final int EVENT_YEAR = 2023;
-    private final int EVENT_MONTH = 12;
-    private final int IDX_MENU_NAME = 0;
-    private final int IDX_MENU_PRICE = 1;
     private final int GIFTS_SATISFIED_PRICE = 120000;
     private final int EVENT_LEAST_AMOUNT = 10000;
-    private final int MIN_ORDER_QUANTITY = 1;
-    private final int MAX_ORDER_QUANTITY = 20;
     private final String EXCEPT_BENEFIT = "증정 이벤트";
     InputView inputView;
     OutputView outputView;
@@ -38,6 +27,7 @@ public class Restaurant {
     private EventPlan eventPlan;
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private HashMap<String, Integer> orderInfomations;
+    private VisitDate visitDate;
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
@@ -73,7 +63,8 @@ public class Restaurant {
         int readDate = 0;
 
         try {
-            readDate = validateIsInteger(inputDate, ErrorMessages.INCORRECT_DATE_RANGE);
+            visitDate = new VisitDate(inputDate);
+            readDate = visitDate.getVisitDay();
             eventPlan = new EventPlan(EVENT_YEAR, EVENT_MONTH, readDate);
             customer.setReservationDate(readDate);
             eventPlan.setCustomer(customer);
@@ -102,24 +93,6 @@ public class Restaurant {
 
     private void initiateOrderInfo() {
         totalQuantity = 0;
-    }
-
-    //완
-    public int validateIsInteger(String string, ErrorMessages errorType) {
-        int inputData = 0;
-        try {
-            inputData = Integer.parseInt(string);
-        } catch (IllegalArgumentException e) {
-            errorMsg = errorType.getErrorMsg();
-            throw new IllegalArgumentException(errorMsg);
-        }
-
-        //완
-        if (inputData == 0) {
-            throw new IllegalArgumentException(errorType.getErrorMsg());
-        }
-
-        return inputData;
     }
 
     private void distinctionMenuCategory() {
