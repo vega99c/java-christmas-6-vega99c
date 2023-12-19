@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EventPlan {
+    public static final int EVENT_YEAR = 2023;
+    public static final int EVENT_MONTH = 12;
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private final String CHRIST_MAS_EVENT_MESSAGE = "크리스마스 디데이 할인: -%s원" + LINE_SEPARATOR;
     private final String WEEKDAY_EVENT_MESSAGE = "평일 할인: -%s원" + LINE_SEPARATOR;

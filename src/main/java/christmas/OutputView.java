@@ -1,6 +1,7 @@
 package christmas;
 
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class OutputView {
     public void printCustomerOrders(Customer customer) {
         System.out.print(ARARM_ORDER_MENU + LINE_SEPARATOR);
         Set<String> keySet = customer.getOrderMenuNames();
-        Hashtable<String, Integer> customerOrder = customer.getCustomerOrder();
+        HashMap<String, Integer> customerOrder = customer.getCustomerOrder();
 
         for (String key : keySet) {
             int value = customerOrder.get(key);

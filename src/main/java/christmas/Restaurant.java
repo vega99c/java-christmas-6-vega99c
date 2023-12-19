@@ -1,25 +1,22 @@
 package christmas;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
+import christmas.domain.reservation.OrderMenuParser;
+import christmas.domain.reservation.VisitDate;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import static christmas.EventPlan.EVENT_YEAR;
+import static christmas.EventPlan.EVENT_MONTH;
+
 public class Restaurant {
-    private final int EVENT_YEAR = 2023;
-    private final int EVENT_MONTH = 12;
-    private final int IDX_MENU_NAME = 0;
-    private final int IDX_MENU_PRICE = 1;
     private final int GIFTS_SATISFIED_PRICE = 120000;
     private final int EVENT_LEAST_AMOUNT = 10000;
-    private final int MIN_ORDER_QUANTITY = 1;
-    private final int MAX_ORDER_QUANTITY = 20;
     private final String EXCEPT_BENEFIT = "증정 이벤트";
     InputView inputView;
     OutputView outputView;
-    private Hashtable<String, Integer> orderHashTable;
-    private List<String> menuList;
     private int totalQuantity;
     private String errorMsg;
     private Customer customer;
@@ -29,13 +26,14 @@ public class Restaurant {
     private List<String> dessertMenu;
     private EventPlan eventPlan;
     private static final String LINE_SEPARATOR = System.lineSeparator();
+    private HashMap<String, Integer> orderInfomations;
+    private VisitDate visitDate;
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
         mainMenu = Menu.MAIN.getChildMenu();
         dessertMenu = Menu.DESSERT.getChildMenu();
-        menuList = new ArrayList<String>();
-        orderHashTable = new Hashtable<>();
+        orderInfomations = new LinkedHashMap<>();
         inputView = new InputView();
         outputView = new OutputView();
         menuInfo = Menu.ROOT;
@@ -65,7 +63,8 @@ public class Restaurant {
         int readDate = 0;
 
         try {
-            readDate = validateIsInteger(inputDate, ErrorMessages.INCORRECT_DATE_RANGE);
+            visitDate = new VisitDate(inputDate);
+            readDate = visitDate.getVisitDay();
             eventPlan = new EventPlan(EVENT_YEAR, EVENT_MONTH, readDate);
             customer.setReservationDate(readDate);
             eventPlan.setCustomer(customer);
@@ -81,83 +80,24 @@ public class Restaurant {
     }
 
     public void menuOrderStart(String inputMenu) {
-        List<String> menuList = null;
-        menuList = new ArrayList<String>(List.of(inputMenu.split(",")));
-
         try {
-            validateMenuOrder(menuList);
+            orderInfomations = OrderMenuParser.parse(inputMenu);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
             initiateOrderInfo();
             menuOrderStart(inputView.readMenu());
         }
+        customer.setMyOrder(orderInfomations);
+        distinctionMenuCategory();
     }
 
     private void initiateOrderInfo() {
         totalQuantity = 0;
-        orderHashTable.clear();
-        menuList.clear();
-    }
-
-    public void isValidForm(String orderInfo) {
-        String menuName = "";
-        String quantity = "";
-
-        try {
-            menuName = orderInfo.split("-")[IDX_MENU_NAME];
-            quantity = orderInfo.split("-")[IDX_MENU_PRICE];
-        } catch (ArrayIndexOutOfBoundsException error) {
-            throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
-        }
-
-        addOrderMenu(menuName);
-        validateEachMenuQuantity(menuName, validateIsInteger(quantity, ErrorMessages.INCORRECT_MENU_ORDER));
-    }
-
-    private void validateEachMenuQuantity(String menuName, int quantity) {
-        totalQuantity += quantity;
-
-        if (validateTotalOrderQuantity()) {
-            orderHashTable.put(menuName, quantity);
-        }
-    }
-
-    public boolean validateOnlyDrink() {
-        List<String> drinkList = Menu.DRINK.getChildMenu();
-
-        for (String menu : menuList) {
-            if (!drinkList.contains(menu)) {
-                return false;
-            }
-        }
-
-        menuList.clear();
-        throw new IllegalArgumentException(ErrorMessages.NOT_ALLOWED_ONLY_DRINK.getErrorMsg());
-    }
-
-    private void validateDuplicatedMenu() {
-        Set<String> menuSet = new HashSet<>(menuList);
-
-        if (menuSet.size() != menuList.size()) {
-            menuList.clear();
-            throw new IllegalArgumentException(ErrorMessages.INCORRECT_MENU_ORDER.getErrorMsg());
-        }
-    }
-
-    public void validateMenuOrder(List<String> orderInfos) {
-        for (String order : orderInfos) {
-            isValidForm(order);
-        }
-
-        validateDuplicatedMenu();
-        validateOnlyDrink();
-        customer.setMyOrder(orderHashTable);
-        distinctionMenuCategory();
     }
 
     private void distinctionMenuCategory() {
         Set<String> keySet = customer.getOrderMenuNames();
-        Hashtable<String, Integer> orderTable = customer.getCustomerOrder();
+        HashMap<String, Integer> orderTable = customer.getCustomerOrder();
 
         for (String menuName : keySet) {
             if (mainMenu.contains(menuName)) {
@@ -170,44 +110,14 @@ public class Restaurant {
         }
     }
 
-    public int validateIsInteger(String string, ErrorMessages errorType) {
-        int inputData = 0;
-        try {
-            inputData = Integer.parseInt(string);
-        } catch (NumberFormatException e) {
-            errorMsg = errorType.getErrorMsg();
-            throw new IllegalArgumentException(errorMsg);
-        }
-
-        if (inputData == 0) {
-            throw new IllegalArgumentException(errorType.getErrorMsg());
-        }
-
-        return inputData;
-    }
-
     public int getTotalQuantity() {
         return totalQuantity;
     }
 
-    private boolean validateTotalOrderQuantity() {
-        if ((getTotalQuantity() < MIN_ORDER_QUANTITY) || (getTotalQuantity() > MAX_ORDER_QUANTITY)) {
-            errorMsg = ErrorMessages.NOT_INCLUDE_ORDER_RANGE.getErrorMsg();
-            throw new IllegalArgumentException(errorMsg);
-        }
-
-        return true;
-    }
-
-    public void addOrderMenu(String menuName) {
-        Menu menu = Menu.ROOT;
-        menu.contains(menuName);
-        menuList.add(menuName);
-    }
 
     public void calculateTotalPrice() {
         Set<String> keySet = customer.getOrderMenuNames();
-        Hashtable<String, Integer> customerOrder = customer.getCustomerOrder();
+        HashMap<String, Integer> customerOrder = customer.getCustomerOrder();
 
         for (String key : keySet) {
             int menuCount = customerOrder.get(key);
@@ -283,7 +193,7 @@ public class Restaurant {
     }
 
     private void showBenefitsHistory() {
-        Hashtable<String, Integer> benefitsHistory = customer.getMyBenefits();
+        HashMap<String, Integer> benefitsHistory = customer.getMyBenefits();
 
         if (benefitsHistory.isEmpty()) {
             outputView.isNoting();
