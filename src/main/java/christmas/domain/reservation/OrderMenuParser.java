@@ -18,6 +18,8 @@ public class OrderMenuParser {
         HashMap<String, Integer> orderInfomations = new LinkedHashMap<>();
 
         List<String> menuList = new ArrayList<>(List.of(inputData.split(",")));
+        List<String> menuNameList = new ArrayList<>();
+        List<Integer> menuQuantityList = new ArrayList<>();
 
         for (String orderedMenuInfo : menuList) {
             OrderValidator.validateOrderForm(orderedMenuInfo);
@@ -28,8 +30,13 @@ public class OrderMenuParser {
             OrderValidator.validateMenuDuplicate(orderInfomations, menuDetailInfo.get(menuNameIndex));
             orderInfomations.put(menuDetailInfo.get(menuNameIndex),
                     Integer.parseInt(menuDetailInfo.get(menuQuantityIndex)));
+            menuNameList.add(menuDetailInfo.get(menuNameIndex));
+            menuQuantityList.add(Integer.parseInt(menuDetailInfo.get(menuQuantityIndex)));
         }
 
+        OrderValidator.validateMenuOnlyDrink(menuNameList);
+        OrderValidator.validateTotalOrderQuantity(menuQuantityList.stream().
+                mapToInt(Integer::intValue).sum());
         return orderInfomations;
     }
 

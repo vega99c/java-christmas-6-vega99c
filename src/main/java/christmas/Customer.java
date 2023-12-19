@@ -1,11 +1,12 @@
 package christmas;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
 
 public class Customer {
-    private Hashtable<String, Integer> myOrder;
-    private Hashtable<String, Integer> myBenefits;
+    private HashMap<String, Integer> myOrder;
+    private HashMap<String, Integer> myBenefits;
     private int reservationDate;
     private int mainMenuCount;
     private int dessertCount;
@@ -22,21 +23,20 @@ public class Customer {
         dessertCount = 0;
         reservationDate = 0;
         totalBenefits = 0;
-        myBenefits = new Hashtable<>();
-        myOrder = new Hashtable<>();
+        myBenefits = new HashMap<>();
+        myOrder = new HashMap<>();
     }
 
-    public void setMyOrder(Hashtable<String, Integer> orders) {
+    public void setMyOrder(HashMap<String, Integer> orders) {
         myOrder = orders;
     }
 
     public Set<String> getOrderMenuNames() {
-        Set<String> keySet = myOrder.keySet();
 
-        return keySet;
+        return myOrder.keySet();
     }
 
-    public Hashtable<String, Integer> getCustomerOrder() {
+    public HashMap<String, Integer> getCustomerOrder() {
         return myOrder;
     }
 
@@ -68,7 +68,7 @@ public class Customer {
         myBenefits.put(eventName, discountPrice);
     }
 
-    public Hashtable<String, Integer> getMyBenefits() {
+    public HashMap<String, Integer> getMyBenefits() {
         return myBenefits;
     }
 

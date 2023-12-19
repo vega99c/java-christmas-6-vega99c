@@ -4,11 +4,15 @@ package christmas;
 //import static christmas.validation.OrderValidator.validateOrderForm;
 
 
+import christmas.domain.reservation.OrderMenu;
+import christmas.domain.reservation.OrderMenuParser;
 import christmas.validation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -24,8 +28,6 @@ public class Restaurant {
     private final String EXCEPT_BENEFIT = "증정 이벤트";
     InputView inputView;
     OutputView outputView;
-    private Hashtable<String, Integer> orderHashTable;
-    private List<String> menuList;
     private int totalQuantity;
     private String errorMsg;
     private Customer customer;
@@ -35,13 +37,13 @@ public class Restaurant {
     private List<String> dessertMenu;
     private EventPlan eventPlan;
     private static final String LINE_SEPARATOR = System.lineSeparator();
+    private HashMap<String, Integer> orderInfomations;
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
         mainMenu = Menu.MAIN.getChildMenu();
         dessertMenu = Menu.DESSERT.getChildMenu();
-        menuList = new ArrayList<String>();
-        orderHashTable = new Hashtable<>();
+        orderInfomations = new LinkedHashMap<>();
         inputView = new InputView();
         outputView = new OutputView();
         menuInfo = Menu.ROOT;
@@ -87,46 +89,19 @@ public class Restaurant {
     }
 
     public void menuOrderStart(String inputMenu) {
-        List<String> menuList = null;
-        menuList = new ArrayList<String>(List.of(inputMenu.split(",")));
-
         try {
-            validateMenuOrder(menuList);
+            orderInfomations = OrderMenuParser.parse(inputMenu);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
             initiateOrderInfo();
             menuOrderStart(inputView.readMenu());
         }
+        customer.setMyOrder(orderInfomations);
+        distinctionMenuCategory();
     }
 
     private void initiateOrderInfo() {
         totalQuantity = 0;
-        orderHashTable.clear();
-        menuList.clear();
-    }
-
-    //완
-    public void isValidForm(String orderInfo) {
-
-    }
-
-//    public void addOrderMenu(String menuName) {
-//        Menu menu = Menu.ROOT;
-//        menu.contains(menuName);
-//        menuList.add(menuName);
-//    }
-
-
-    public void validateMenuOrder(List<String> orderInfos) {
-        for (String order : orderInfos) {
-            isValidForm(order);
-        }
-        
-//        validateOnlyDrink();
-        OrderValidator.validateMenuOnlyDrink(menuList);
-
-        customer.setMyOrder(orderHashTable);
-        distinctionMenuCategory();
     }
 
     //완
@@ -149,7 +124,7 @@ public class Restaurant {
 
     private void distinctionMenuCategory() {
         Set<String> keySet = customer.getOrderMenuNames();
-        Hashtable<String, Integer> orderTable = customer.getCustomerOrder();
+        HashMap<String, Integer> orderTable = customer.getCustomerOrder();
 
         for (String menuName : keySet) {
             if (mainMenu.contains(menuName)) {
@@ -169,7 +144,7 @@ public class Restaurant {
 
     public void calculateTotalPrice() {
         Set<String> keySet = customer.getOrderMenuNames();
-        Hashtable<String, Integer> customerOrder = customer.getCustomerOrder();
+        HashMap<String, Integer> customerOrder = customer.getCustomerOrder();
 
         for (String key : keySet) {
             int menuCount = customerOrder.get(key);
@@ -245,7 +220,7 @@ public class Restaurant {
     }
 
     private void showBenefitsHistory() {
-        Hashtable<String, Integer> benefitsHistory = customer.getMyBenefits();
+        HashMap<String, Integer> benefitsHistory = customer.getMyBenefits();
 
         if (benefitsHistory.isEmpty()) {
             outputView.isNoting();
