@@ -1,15 +1,28 @@
 package christmas.domain.reservation;
 
 import christmas.domain.menu.Menu;
+import christmas.validation.OrderValidator;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
-    List<OrderCompletedMenu> menus = new ArrayList<>();
+    List<OrderCompletedMenu> orders = new ArrayList<>();
 
     // 입력된 주문 데이터를 가지고 OrderedMenu 리스트에 추가 로직
     public List<OrderCompletedMenu> ordersByInputData(String inputData) {
-        return menus;
+        List<String> orderStringList = new ArrayList<>(List.of(inputData.split(",")));
+
+        for (String order : orderStringList) {
+            OrderCompletedMenu orderCompletedMenu = OrderCompletedMenu.parse(order);
+
+            orders.add(orderCompletedMenu);
+        }
+
+        OrderValidator.validateMenuDuplicate(orders);
+        OrderValidator.validateMenuOnlyDrink(orders);
+        OrderValidator.validateTotalOrderQuantity(orders);
+
+        return orders;
     }
 
     public void printOrders() {
