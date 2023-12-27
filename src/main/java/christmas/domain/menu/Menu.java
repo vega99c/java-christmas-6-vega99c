@@ -1,5 +1,10 @@
 package christmas.domain.menu;
 
-public class Menu {
+public interface Menu {
+    String getMenuName();
+
+    int getMenuPrice();
+
+    String getMenuType();
 }
 
