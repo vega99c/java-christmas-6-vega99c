@@ -1,14 +1,15 @@
 package christmas.domain.menu;
 
-public enum Drink implements Menu {
-    ZERO_COKE("제로콜라", 3000),
-    RED_WINE("레드와인", 60000),
-    CHAMPAGNE("샴페인", 25000);
+public enum MainCourse implements Menu {
+    T_BONE_STAKE("티본스테이크", 55000),
+    BBQ_RIBS("바비큐립", 54000),
+    SEAFOOD_PASTA("해산물파스타", 35000),
+    CHRISTMAS_PASTA("크리스마스파스타", 25000);
 
     private final String menuName;
     private final int menuPrice;
 
-    Drink(String menuName, int menuPrice) {
+    MainCourse(String menuName, int menuPrice) {
         this.menuName = menuName;
         this.menuPrice = menuPrice;
     }
@@ -22,6 +23,6 @@ public enum Drink implements Menu {
     }
 
     public String getMenuType() {
-        return "<음료>";
+        return "<메인>";
     }
 }
