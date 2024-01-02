@@ -20,15 +20,7 @@ public class OrderValidator {
         try {
             String name = orderInfo.split("-")[IDX_MENU_NAME];
             String quantity = orderInfo.split("-")[IDX_MENU_QUANTITY];
-        } catch (IllegalArgumentException exception) {
-            throw new OrderMenuException();
-        }
-    }
-
-    public static void validateMenuExist(String menuName) {
-        try {
-            Menu.ROOT.contains(menuName);
-        } catch (IllegalArgumentException exception) {
+        } catch (ArrayIndexOutOfBoundsException exception) {
             throw new OrderMenuException();
         }
     }
@@ -85,7 +77,7 @@ public class OrderValidator {
     */
     public static void validateEachMenuQuantity(String number) {
         int parseNumber = Integer.parseInt(number);
-        if (parseNumber == 0 || parseNumber > 20) {
+        if (parseNumber <= 0 || parseNumber > MAX_ORDER_QUANTITY) {
             throw new OrderMenuException();
         }
     }
