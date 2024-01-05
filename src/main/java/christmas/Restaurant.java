@@ -1,8 +1,11 @@
 package christmas;
 
-import christmas.domain.reservation.OrderMenuParser;
+import christmas.domain.reservation.Order;
+import christmas.domain.reservation.OrderCompletedMenu;
+//import christmas.domain.reservation.OrderMenuParser;
 import christmas.domain.reservation.VisitDate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,14 +29,15 @@ public class Restaurant {
     private List<String> dessertMenu;
     private EventPlan eventPlan;
     private static final String LINE_SEPARATOR = System.lineSeparator();
-    private HashMap<String, Integer> orderInfomations;
+    private List<OrderCompletedMenu> orderInfomations;
     private VisitDate visitDate;
+    private Order order = new Order();
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
         mainMenu = Menu.MAIN.getChildMenu();
         dessertMenu = Menu.DESSERT.getChildMenu();
-        orderInfomations = new LinkedHashMap<>();
+        orderInfomations = new ArrayList<>();
         inputView = new InputView();
         outputView = new OutputView();
         menuInfo = Menu.ROOT;
@@ -81,13 +85,13 @@ public class Restaurant {
 
     public void menuOrderStart(String inputMenu) {
         try {
-            orderInfomations = OrderMenuParser.parse(inputMenu);
+            orderInfomations = order.ordersByInputData(inputMenu);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
             initiateOrderInfo();
             menuOrderStart(inputView.readMenu());
         }
-        customer.setMyOrder(orderInfomations);
+//        customer.setMyOrder(orderInfomations);
         distinctionMenuCategory();
     }
 

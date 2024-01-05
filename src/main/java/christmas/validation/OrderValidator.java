@@ -1,9 +1,13 @@
 package christmas.validation;
 
 import christmas.Menu;
+import christmas.domain.reservation.Order;
+import christmas.domain.reservation.OrderCompletedMenu;
 import christmas.exception.OrderMenuException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class OrderValidator {
@@ -16,44 +20,45 @@ public class OrderValidator {
         try {
             String name = orderInfo.split("-")[IDX_MENU_NAME];
             String quantity = orderInfo.split("-")[IDX_MENU_QUANTITY];
-        } catch (IllegalArgumentException exception) {
+        } catch (ArrayIndexOutOfBoundsException exception) {
             throw new OrderMenuException();
         }
     }
 
-    public static void validateMenuExist(String menuName) {
-        try {
-            Menu.ROOT.contains(menuName);
-        } catch (IllegalArgumentException exception) {
-            throw new OrderMenuException();
-        }
-    }
+    public static void validateMenuDuplicate(List<OrderCompletedMenu> orderCompletedMenus) {
+        Set<String> menuNameSet = new HashSet<>();
+        boolean hasDuplicates = false;
 
-    public static void validateMenuDuplicate(HashMap<String, Integer> orderInfomations, String orderMenuName) {
-        for (String orderedMenuName : orderInfomations.keySet()) {
-            if (orderedMenuName.equals(orderMenuName)) {
-                throw new OrderMenuException();
-            }
-        }
-    }
+        for (OrderCompletedMenu orderCompletedMenu : orderCompletedMenus) {
+            String menuName = orderCompletedMenu.getMenu().getMenuName();
 
-    public static void validateMenuOnlyDrink(List<String> menus) {
-        List<String> drinkList = Menu.DRINK.getChildMenu();
-        boolean triggerIsOnlyDrink = true;
-
-        for (String orderedMenuName : menus) {
-            if (!drinkList.contains(orderedMenuName)) {
-                triggerIsOnlyDrink = false;
+            if (!menuNameSet.add(menuName)) {
+                hasDuplicates = true;
                 break;
             }
         }
-        if (triggerIsOnlyDrink) {
+
+        if (hasDuplicates) {
             throw new OrderMenuException();
         }
     }
 
-    public static void validateTotalOrderQuantity(int totalQuantity) {
-        if (totalQuantity < MIN_ORDER_QUANTITY || totalQuantity > MAX_ORDER_QUANTITY) {
+    public static void validateMenuOnlyDrink(List<OrderCompletedMenu> orderCompletedMenus) {
+        boolean isAllDrink = orderCompletedMenus.stream()
+                .allMatch(orderCompletedMenu -> "DRINK".equals(orderCompletedMenu.getMenu().getMenuType()));
+
+        if (isAllDrink) {
+            throw new OrderMenuException();
+        }
+    }
+
+    public static void validateTotalOrderQuantity(List<OrderCompletedMenu> orderCompletedMenus) {
+        int totalQuantity = 0;
+        for (OrderCompletedMenu orderCompletedMenu : orderCompletedMenus) {
+            totalQuantity += orderCompletedMenu.getQuantity();
+        }
+
+        if (totalQuantity > MAX_ORDER_QUANTITY) {
             throw new OrderMenuException();
         }
     }
@@ -72,7 +77,7 @@ public class OrderValidator {
     */
     public static void validateEachMenuQuantity(String number) {
         int parseNumber = Integer.parseInt(number);
-        if (parseNumber == 0 || parseNumber > 20) {
+        if (parseNumber <= 0 || parseNumber > MAX_ORDER_QUANTITY) {
             throw new OrderMenuException();
         }
     }
