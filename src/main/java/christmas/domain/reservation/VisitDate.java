@@ -1,10 +1,10 @@
 package christmas.domain.reservation;
 
+import static christmas.EventPlan.EVENT_MONTH;
+import static christmas.EventPlan.EVENT_YEAR;
+
 import christmas.validation.VisitDateValidator;
 import java.time.LocalDate;
-
-import static christmas.EventPlan.EVENT_YEAR;
-import static christmas.EventPlan.EVENT_MONTH;
 
 public class VisitDate {
     private final int visitDay;
@@ -19,5 +19,9 @@ public class VisitDate {
 
     public int getVisitDay() {
         return visitDay;
+    }
+
+    public LocalDate getReservationDate() {
+        return reservationDate;
     }
 }
