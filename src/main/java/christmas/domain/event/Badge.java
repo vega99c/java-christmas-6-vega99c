@@ -20,4 +20,8 @@ public enum Badge {
     public String getBadgeName() {
         return badgeName;
     }
+
+    public void checkBadgeEventPossible() {
+
+    }
 }
