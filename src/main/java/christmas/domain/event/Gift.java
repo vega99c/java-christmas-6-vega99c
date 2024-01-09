@@ -10,6 +10,10 @@ public class Gift {
     private int totalGiftBenefit;
     private List<EventDetail> eventDetailList;
 
+    public void addEventDetail(String eventName, int eventBenefit) {
+        EventDetail eventInfo = new EventDetail(eventName, eventBenefit);
+        eventDetailList.add(eventInfo);
+    }
 
     public int getTotalGiftBenefit() {
         return totalGiftBenefit;
