@@ -1,5 +1,6 @@
 package christmas;
 
+import christmas.domain.event.Discount;
 import christmas.domain.reservation.Order;
 import christmas.domain.reservation.OrderCompletedMenu;
 //import christmas.domain.reservation.OrderMenuParser;
@@ -32,6 +33,7 @@ public class Restaurant {
     private List<OrderCompletedMenu> orderInfomations;
     private VisitDate visitDate;
     private Order order = new Order();
+
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
@@ -71,6 +73,7 @@ public class Restaurant {
             readDate = visitDate.getVisitDay();
             eventPlan = new EventPlan(EVENT_YEAR, EVENT_MONTH, readDate);
             customer.setReservationDate(readDate);
+            order.setVisitDate(visitDate);
             eventPlan.setCustomer(customer);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
@@ -161,14 +164,14 @@ public class Restaurant {
     }
 
     private void calculateTotalBenefits() {
-        int totalBenefits = 0;
-        Set<String> keySet = customer.getMyBenefits().keySet();
+//        int totalBenefits = 0;
+//        Set<String> keySet = customer.getMyBenefits().keySet();
+//
+//        for (String key : keySet) {
+//            totalBenefits += customer.getMyBenefits().get(key);
+//        }
 
-        for (String key : keySet) {
-            totalBenefits += customer.getMyBenefits().get(key);
-        }
-
-        customer.setTotalBenefits(totalBenefits);
+        customer.setTotalBenefits(order.getDiscountEvent().getTotalDiscountBenefit());
         eventPlan.checkBadgeEvent();
     }
 
