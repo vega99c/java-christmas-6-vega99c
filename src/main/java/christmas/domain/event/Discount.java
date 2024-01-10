@@ -1,8 +1,11 @@
 package christmas.domain.event;
 
+import christmas.OutputView;
+import christmas.domain.reservation.Order;
 import christmas.domain.reservation.OrderCompletedMenu;
 import christmas.domain.reservation.VisitDate;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Discount {
@@ -10,8 +13,9 @@ public class Discount {
     public static final int EVENT_MONTH = 12;
     public static final int EVENT_MONTH_START_DAY = 1;
     public static final int TARGET_D_DAY = 25;
-    public static final int D_DAY_BASE_DISCOUNT = 1000;
-    private final int SPCIAL_DAY_DISCOUNT = 1000;
+    public static final int D_DAY_DISCOUNT_BASE_AMOUNT = 1000;
+    private final int WEEK_DISCOUNT_BASE_AMOUNT = 2023;
+    private final int SPCIAL_DAY_DISCOUNT_BASE_AMOUNT = 1000;
     private final List<Integer> specialDayList = List.of(3, 10, 17, 24, 25, 31);
     private final List<String> weekendList = List.of("FRIDAY", "SATURDAY");
 
@@ -23,11 +27,12 @@ public class Discount {
     private int totalDiscountBenefit;
     private List<EventDetail> eventDetailList;
     private VisitDate visitDate;
-    private List<OrderCompletedMenu> orderCompletedMenus;
+    private Order order;
 
-    Discount(VisitDate visitDate, List<OrderCompletedMenu> orderCompletedMenus) {
+    public Discount(VisitDate visitDate, Order order) {
+        this.eventDetailList = new ArrayList<>();
         this.visitDate = visitDate;
-        this.orderCompletedMenus = orderCompletedMenus;
+        this.order = order;
     }
 
     public void addEventDetail(String eventName, int eventBenefit) {
@@ -43,32 +48,37 @@ public class Discount {
 
     private void checkChristmasDdayEventPossible() {
         if (visitDate.getVisitDay() <= TARGET_D_DAY) {
-            int dDayDiscount = D_DAY_BASE_DISCOUNT + ((visitDate.getVisitDay() - 1) * 100);
-            addEventDetail(CHRIST_MAS_EVENT_MESSAGE, dDayDiscount);
-            totalDiscountBenefit += dDayDiscount;
+            int dDayDiscount = D_DAY_DISCOUNT_BASE_AMOUNT + ((visitDate.getVisitDay() - 1) * 100);
+
+            proceedAddEvent(CHRIST_MAS_EVENT_MESSAGE, dDayDiscount);
         }
     }
 
     //주말 혹은 평일 이벤트 체크
     private void checkWeekEventPossible() {
+        int weekEventDiscount = 0;
         //평일 할인
         if (!weekendList.contains(visitDate.getReservationDate().getDayOfWeek())) {
-            addEventDetail(WEEKDAY_EVENT_MESSAGE, discountUnit * dessertMenuCount);
+            weekEventDiscount = WEEK_DISCOUNT_BASE_AMOUNT * order.getDessertMenuOrderCount();
+
+            proceedAddEvent(WEEKDAY_EVENT_MESSAGE, weekEventDiscount);
             return;
         }
 
         //주말 할인
-        addEventDetail(WEEKEND_EVENT_MESSAGE, discountUnit * mainMenuCount);
+        weekEventDiscount = WEEK_DISCOUNT_BASE_AMOUNT * order.getMainMenuOrderCount();
+        proceedAddEvent(WEEKEND_EVENT_MESSAGE, weekEventDiscount);
     }
 
     private void checkSpecialEventPossible() {
         if (specialDayList.contains(visitDate.getVisitDay())) {
-            addEventDetail(SPCIAL_EVENT_MESSAGE, SPCIAL_DAY_DISCOUNT);
+            proceedAddEvent(SPCIAL_EVENT_MESSAGE, SPCIAL_DAY_DISCOUNT_BASE_AMOUNT);
         }
     }
 
-    public int getLastDay() {
-        return LocalDate.of(EVENT_YEAR, EVENT_MONTH, EVENT_MONTH_START_DAY).lengthOfMonth();
+    public void proceedAddEvent(String message, int benefit) {
+        addEventDetail(message, benefit);
+        totalDiscountBenefit += benefit;
     }
 
     public List<EventDetail> getEventDetailList() {
