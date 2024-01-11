@@ -1,19 +1,16 @@
 package christmas;
 
-import christmas.domain.event.Discount;
+import static christmas.EventPlan.EVENT_MONTH;
+import static christmas.EventPlan.EVENT_YEAR;
+
+import christmas.domain.event.EventDetail;
 import christmas.domain.reservation.Order;
 import christmas.domain.reservation.OrderCompletedMenu;
-//import christmas.domain.reservation.OrderMenuParser;
 import christmas.domain.reservation.VisitDate;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-
-import static christmas.EventPlan.EVENT_YEAR;
-import static christmas.EventPlan.EVENT_MONTH;
 
 public class Restaurant {
     private final int GIFTS_SATISFIED_PRICE = 120000;
@@ -143,13 +140,15 @@ public class Restaurant {
     }
 
     public boolean isHavingGifts() {
-        if (getTotalPrice() < GIFTS_SATISFIED_PRICE) {
+        if (order.getTotalOrderPrice() < GIFTS_SATISFIED_PRICE) {
             outputView.isNothingGiven();
             return false;
         }
 
         customer.setGivenGifts(true);
-        outputView.printGiveGifts(eventPlan.getGiftsMenuName(), eventPlan.getGiftsCount());
+        outputView.printGiveGifts(order.getGiftsEvent().getGiftsMenu().getMenuName(),
+                order.getGiftsEvent().getGiftsQuantity());
+
         return true;
     }
 
@@ -171,7 +170,8 @@ public class Restaurant {
 //            totalBenefits += customer.getMyBenefits().get(key);
 //        }
 
-        customer.setTotalBenefits(order.getDiscountEvent().getTotalDiscountBenefit());
+        customer.updateTotalBenefits(order.getDiscountEvent().getTotalDiscountBenefit());
+        customer.updateTotalBenefits(order.getGiftsEvent().getTotalGiftBenefit());
         eventPlan.checkBadgeEvent();
     }
 
@@ -200,16 +200,19 @@ public class Restaurant {
     }
 
     private void showBenefitsHistory() {
-        HashMap<String, Integer> benefitsHistory = customer.getMyBenefits();
+        List<EventDetail> eventDetailList = new ArrayList<>();
 
-        if (benefitsHistory.isEmpty()) {
+        eventDetailList.addAll(order.getDiscountEvent().getEventDetailList());
+        eventDetailList.addAll(order.getGiftsEvent().getEventDetailList());
+
+        if (eventDetailList.isEmpty()) {
             outputView.isNoting();
             return;
         }
 
         outputView.printNoticeBenefitsHistory();
-        for (String key : customer.getMyBenefits().keySet()) {
-            outputView.printBenefitsApplyHistory(key, benefitsHistory.get(key));
+        for (EventDetail event : eventDetailList) {
+            outputView.printBenefitsApplyHistory(event.getEventName(), event.getBenefitMoney());
         }
 
         System.out.print(LINE_SEPARATOR);
