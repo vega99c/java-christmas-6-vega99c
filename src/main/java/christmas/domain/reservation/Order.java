@@ -2,6 +2,7 @@ package christmas.domain.reservation;
 
 import christmas.domain.event.Badge;
 import christmas.domain.event.Discount;
+import christmas.domain.event.Gift;
 import christmas.validation.OrderValidator;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,8 @@ public class Order {
     VisitDate visitDate;
     Discount discountEvent;
     Badge badgeEvent = new Badge();
+    Gift giftsEvent = new Gift();
+    int totalOrderPrice;
 
     // 입력된 주문 데이터를 가지고 정상적인 주문들만 orders 리스트에 추가하는 로직
     public List<OrderCompletedMenu> ordersByInputData(String inputData) {
@@ -28,6 +31,7 @@ public class Order {
         OrderValidator.validateTotalOrderQuantity(orders);
 
         discountEvent.checkWholeDiscountEventPossible();
+        giftsEvent.checkGiftsEventPossible(getTotalOrderPrice());
         badgeEvent.checkBadgeEventPossible(getDiscountEvent().getTotalDiscountBenefit());
         return orders;
     }
@@ -64,7 +68,23 @@ public class Order {
         return orders;
     }
 
+    public int getTotalOrderPrice() {
+        for (OrderCompletedMenu menu : orders) {
+            totalOrderPrice += menu.getPricePerMenu();
+        }
+
+        return totalOrderPrice;
+    }
+
     public Discount getDiscountEvent() {
         return discountEvent;
+    }
+
+    public Badge getBadgeEvent() {
+        return badgeEvent;
+    }
+
+    public Gift getGiftsEvent() {
+        return giftsEvent;
     }
 }
