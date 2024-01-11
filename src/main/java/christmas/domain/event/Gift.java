@@ -8,7 +8,7 @@ public class Gift {
     private final int GIVEN_GIFTS_QUANTITY = 1;
     private final int SATISFIED_TOTAL_PRICE_TO_GIFTS = 120000;
     private final String GIFTS_MENU = "샴페인";
-    private int totalGiftBenefit;
+    private int totalGiftsBenefit;
     private List<EventDetail> eventDetailList;
     private List<Menu> giftsList;
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -21,7 +21,7 @@ public class Gift {
     }
 
     public int getTotalGiftBenefit() {
-        return totalGiftBenefit;
+        return totalGiftsBenefit;
     }
 
     public int getGiftsQuantity() {
@@ -33,13 +33,22 @@ public class Gift {
 
         return menuBoard.findMenu(GIFTS_MENU);
     }
-    
+
     private void checkGiftsEventPossible(int totalOrderPrice) {
         if (totalOrderPrice < SATISFIED_TOTAL_PRICE_TO_GIFTS) {
-            addEventDetail(NONE, 0);
+            proceedAddEvent(NONE, 0);
             return;
         }
 
-        addEventDetail(GIFTS_EVENT_MESSAGE, getGiftsMenu().getMenuPrice());
+        proceedAddEvent(GIFTS_EVENT_MESSAGE, getGiftsMenu().getMenuPrice());
+    }
+
+    public void proceedAddEvent(String message, int benefit) {
+        addEventDetail(message, benefit);
+        totalGiftsBenefit += benefit;
+    }
+
+    private List<EventDetail> getEventDetailList() {
+        return eventDetailList;
     }
 }
