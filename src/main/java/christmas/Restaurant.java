@@ -1,18 +1,16 @@
 package christmas;
 
+import static christmas.EventPlan.EVENT_MONTH;
+import static christmas.EventPlan.EVENT_YEAR;
+
+import christmas.domain.event.EventDetail;
 import christmas.domain.reservation.Order;
 import christmas.domain.reservation.OrderCompletedMenu;
-//import christmas.domain.reservation.OrderMenuParser;
 import christmas.domain.reservation.VisitDate;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-
-import static christmas.EventPlan.EVENT_YEAR;
-import static christmas.EventPlan.EVENT_MONTH;
 
 public class Restaurant {
     private final int GIFTS_SATISFIED_PRICE = 120000;
@@ -32,6 +30,7 @@ public class Restaurant {
     private List<OrderCompletedMenu> orderInfomations;
     private VisitDate visitDate;
     private Order order = new Order();
+
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
@@ -71,6 +70,7 @@ public class Restaurant {
             readDate = visitDate.getVisitDay();
             eventPlan = new EventPlan(EVENT_YEAR, EVENT_MONTH, readDate);
             customer.setReservationDate(readDate);
+            order.setVisitDate(visitDate);
             eventPlan.setCustomer(customer);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
@@ -140,13 +140,15 @@ public class Restaurant {
     }
 
     public boolean isHavingGifts() {
-        if (getTotalPrice() < GIFTS_SATISFIED_PRICE) {
+        if (order.getTotalOrderPrice() < GIFTS_SATISFIED_PRICE) {
             outputView.isNothingGiven();
             return false;
         }
 
         customer.setGivenGifts(true);
-        outputView.printGiveGifts(eventPlan.getGiftsMenuName(), eventPlan.getGiftsCount());
+        outputView.printGiveGifts(order.getGiftsEvent().getGiftsMenu().getMenuName(),
+                order.getGiftsEvent().getGiftsQuantity());
+
         return true;
     }
 
@@ -161,14 +163,15 @@ public class Restaurant {
     }
 
     private void calculateTotalBenefits() {
-        int totalBenefits = 0;
-        Set<String> keySet = customer.getMyBenefits().keySet();
+//        int totalBenefits = 0;
+//        Set<String> keySet = customer.getMyBenefits().keySet();
+//
+//        for (String key : keySet) {
+//            totalBenefits += customer.getMyBenefits().get(key);
+//        }
 
-        for (String key : keySet) {
-            totalBenefits += customer.getMyBenefits().get(key);
-        }
-
-        customer.setTotalBenefits(totalBenefits);
+        customer.updateTotalBenefits(order.getDiscountEvent().getTotalDiscountBenefit());
+        customer.updateTotalBenefits(order.getGiftsEvent().getTotalGiftBenefit());
         eventPlan.checkBadgeEvent();
     }
 
@@ -197,16 +200,19 @@ public class Restaurant {
     }
 
     private void showBenefitsHistory() {
-        HashMap<String, Integer> benefitsHistory = customer.getMyBenefits();
+        List<EventDetail> eventDetailList = new ArrayList<>();
 
-        if (benefitsHistory.isEmpty()) {
+        eventDetailList.addAll(order.getDiscountEvent().getEventDetailList());
+        eventDetailList.addAll(order.getGiftsEvent().getEventDetailList());
+
+        if (eventDetailList.isEmpty()) {
             outputView.isNoting();
             return;
         }
 
         outputView.printNoticeBenefitsHistory();
-        for (String key : customer.getMyBenefits().keySet()) {
-            outputView.printBenefitsApplyHistory(key, benefitsHistory.get(key));
+        for (EventDetail event : eventDetailList) {
+            outputView.printBenefitsApplyHistory(event.getEventName(), event.getBenefitMoney());
         }
 
         System.out.print(LINE_SEPARATOR);

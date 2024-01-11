@@ -1,7 +1,6 @@
 package christmas;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Set;
 
 public class Customer {
@@ -80,8 +79,8 @@ public class Customer {
         return isGivenGifts;
     }
 
-    public void setTotalBenefits(int benefits) {
-        totalBenefits = benefits;
+    public void updateTotalBenefits(int benefits) {
+        totalBenefits += benefits;
     }
 
     public int getTotalBenefits() {

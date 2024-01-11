@@ -41,4 +41,8 @@ public class OrderCompletedMenu {
     public int getQuantity() {
         return quantity;
     }
+
+    public int getPricePerMenu() {
+        return menu.getMenuPrice() * quantity;
+    }
 }
