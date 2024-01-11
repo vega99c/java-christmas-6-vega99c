@@ -1,10 +1,7 @@
 package christmas.domain.event;
 
-import christmas.OutputView;
 import christmas.domain.reservation.Order;
-import christmas.domain.reservation.OrderCompletedMenu;
 import christmas.domain.reservation.VisitDate;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +14,8 @@ public class Discount {
     private final int WEEK_DISCOUNT_BASE_AMOUNT = 2023;
     private final int SPCIAL_DAY_DISCOUNT_BASE_AMOUNT = 1000;
     private final List<Integer> specialDayList = List.of(3, 10, 17, 24, 25, 31);
-    private final List<String> weekendList = List.of("FRIDAY", "SATURDAY");
-
     private static final String LINE_SEPARATOR = System.lineSeparator();
+    private final List<String> weekendList = List.of("FRIDAY", "SATURDAY");
     private final String CHRIST_MAS_EVENT_MESSAGE = "크리스마스 디데이 할인: -%s원" + LINE_SEPARATOR;
     private final String WEEKDAY_EVENT_MESSAGE = "평일 할인: -%s원" + LINE_SEPARATOR;
     private final String WEEKEND_EVENT_MESSAGE = "주말 할인: -%s원" + LINE_SEPARATOR;
@@ -38,6 +34,11 @@ public class Discount {
     public void addEventDetail(String eventName, int eventBenefit) {
         EventDetail eventInfo = new EventDetail(eventName, eventBenefit);
         eventDetailList.add(eventInfo);
+    }
+
+    public void proceedAddEvent(String message, int benefit) {
+        addEventDetail(message, benefit);
+        totalDiscountBenefit += benefit;
     }
 
     public void checkWholeDiscountEventPossible() {
@@ -74,11 +75,6 @@ public class Discount {
         if (specialDayList.contains(visitDate.getVisitDay())) {
             proceedAddEvent(SPCIAL_EVENT_MESSAGE, SPCIAL_DAY_DISCOUNT_BASE_AMOUNT);
         }
-    }
-
-    public void proceedAddEvent(String message, int benefit) {
-        addEventDetail(message, benefit);
-        totalDiscountBenefit += benefit;
     }
 
     public List<EventDetail> getEventDetailList() {
