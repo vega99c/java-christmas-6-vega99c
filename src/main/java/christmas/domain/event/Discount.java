@@ -61,8 +61,9 @@ public class Discount {
         //평일 할인
         if (!weekendList.contains(visitDate.getReservationDate().getDayOfWeek())) {
             weekEventDiscount = WEEK_DISCOUNT_BASE_AMOUNT * order.getDessertMenuOrderCount();
-
-            proceedAddEvent(WEEKDAY_EVENT_MESSAGE, weekEventDiscount);
+            if (weekEventDiscount != 0) {
+                proceedAddEvent(WEEKDAY_EVENT_MESSAGE, weekEventDiscount);
+            }
             return;
         }
 
