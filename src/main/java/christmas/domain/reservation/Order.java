@@ -14,7 +14,7 @@ public class Order {
     Discount discountEvent;
     Badge badgeEvent = new Badge();
     Gift giftsEvent = new Gift();
-    int totalOrderPrice;
+    int totalOrderPrice = 0;
 
     // 입력된 주문 데이터를 가지고 정상적인 주문들만 orders 리스트에 추가하는 로직
     public List<OrderCompletedMenu> ordersByInputData(String inputData) {
@@ -30,9 +30,12 @@ public class Order {
         OrderValidator.validateMenuOnlyDrink(orders);
         OrderValidator.validateTotalOrderQuantity(orders);
 
+        updateTotalOrderPrice();
+
         discountEvent.checkWholeDiscountEventPossible();
         giftsEvent.checkGiftsEventPossible(getTotalOrderPrice());
-        badgeEvent.checkBadgeEventPossible(getDiscountEvent().getTotalDiscountBenefit());
+        badgeEvent.checkBadgeEventPossible(getTotalBenefit());
+
         return orders;
     }
 
@@ -68,12 +71,22 @@ public class Order {
         return orders;
     }
 
-    public int getTotalOrderPrice() {
+    public void updateTotalOrderPrice() {
         for (OrderCompletedMenu menu : orders) {
             totalOrderPrice += menu.getPricePerMenu();
         }
+    }
 
+    public int getTotalOrderPrice() {
         return totalOrderPrice;
+    }
+
+    public int getTotalOrderPriceAfterDiscount() {
+        return totalOrderPrice - discountEvent.getTotalDiscountBenefit();
+    }
+
+    public int getTotalBenefit() {
+        return discountEvent.getTotalDiscountBenefit() + giftsEvent.getTotalGiftBenefit();
     }
 
     public Discount getDiscountEvent() {
