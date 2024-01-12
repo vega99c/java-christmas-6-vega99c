@@ -22,9 +22,6 @@ public class Restaurant {
     private String errorMsg;
     private Customer customer;
     private Menu menuInfo;
-    private int totalPrice;
-    private List<String> mainMenu;
-    private List<String> dessertMenu;
     private EventPlan eventPlan;
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private List<OrderCompletedMenu> orderInfomations;
@@ -34,8 +31,6 @@ public class Restaurant {
 
     public Restaurant(Customer newCustomer) {
         customer = newCustomer;
-        mainMenu = Menu.MAIN.getChildMenu();
-        dessertMenu = Menu.DESSERT.getChildMenu();
         orderInfomations = new ArrayList<>();
         inputView = new InputView();
         outputView = new OutputView();
@@ -51,10 +46,10 @@ public class Restaurant {
     }
 
     public void proceedCalculatePriceAndDiscount() {
-        calculateTotalPrice();
+        showTotalOrderPrice();
+        showHavingGifts();
         checkWholeEvent();
-        calculateTotalDiscounts();
-        calculateTotalPriceAfterDiscount();
+        showTotalPriceAfterDiscount();
     }
 
     public void proceedOrderFlow(String inputMenu) {
@@ -79,8 +74,8 @@ public class Restaurant {
     }
 
     private void showOrderList() {
-        outputView.printEventHistoryPreviewMessage(EVENT_MONTH, customer.getReservationDate());
-        outputView.printCustomerOrders(customer);
+        outputView.printEventPreviewMessage(EVENT_MONTH, customer.getReservationDate());
+        outputView.printCustomerOrders(order.getOrders());
     }
 
     public void menuOrderStart(String inputMenu) {
@@ -88,115 +83,37 @@ public class Restaurant {
             orderInfomations = order.ordersByInputData(inputMenu);
         } catch (IllegalArgumentException error) {
             System.out.print(error.getMessage());
-            initiateOrderInfo();
             menuOrderStart(inputView.readMenu());
         }
-//        customer.setMyOrder(orderInfomations);
-        distinctionMenuCategory();
     }
 
-    private void initiateOrderInfo() {
-        totalQuantity = 0;
+    public void showTotalOrderPrice() {
+        outputView.printTotalPriceBeforeDiscount(order.getTotalOrderPrice());
     }
 
-    private void distinctionMenuCategory() {
-        Set<String> keySet = customer.getOrderMenuNames();
-        HashMap<String, Integer> orderTable = customer.getCustomerOrder();
-
-        for (String menuName : keySet) {
-            if (mainMenu.contains(menuName)) {
-                customer.increaseMainMenuCount(orderTable.get(menuName));
-            }
-
-            if (dessertMenu.contains(menuName)) {
-                customer.increaseDessertCount(orderTable.get(menuName));
-            }
-        }
-    }
-
-    public int getTotalQuantity() {
-        return totalQuantity;
-    }
-
-
-    public void calculateTotalPrice() {
-        Set<String> keySet = customer.getOrderMenuNames();
-        HashMap<String, Integer> customerOrder = customer.getCustomerOrder();
-
-        for (String key : keySet) {
-            int menuCount = customerOrder.get(key);
-            int menuPrice = menuInfo.getMenuPrice(key);
-
-            totalPrice = totalPrice + (menuPrice * menuCount);
-        }
-
-        customer.setTotalPrice(totalPrice);
-        outputView.printTotalPriceBeforeDiscount(totalPrice);
-        isHavingGifts();
-    }
-
-    public int getTotalPrice() {
-        return totalPrice;
-    }
-
-    public boolean isHavingGifts() {
-        if (order.getTotalOrderPrice() < GIFTS_SATISFIED_PRICE) {
-            outputView.isNothingGiven();
-            return false;
-        }
-
-        customer.setGivenGifts(true);
+    public void showHavingGifts() {
         outputView.printGiveGifts(order.getGiftsEvent().getGiftsMenu().getMenuName(),
                 order.getGiftsEvent().getGiftsQuantity());
-
-        return true;
     }
 
     private void checkWholeEvent() {
-        if (getTotalPrice() >= EVENT_LEAST_AMOUNT) {
-            eventPlan.checkApplyingEvent();
-        }
-
         showBenefitsHistory();
-        calculateTotalBenefits();
+        updateWholeEventBenefits();
         outputView.printTotalBenefits(customer.getTotalBenefits());
     }
 
-    private void calculateTotalBenefits() {
-//        int totalBenefits = 0;
-//        Set<String> keySet = customer.getMyBenefits().keySet();
-//
-//        for (String key : keySet) {
-//            totalBenefits += customer.getMyBenefits().get(key);
-//        }
-
+    //이 부분은 컨트롤러 밖으로 빼내야 함
+    private void updateWholeEventBenefits() {
         customer.updateTotalBenefits(order.getDiscountEvent().getTotalDiscountBenefit());
         customer.updateTotalBenefits(order.getGiftsEvent().getTotalGiftBenefit());
-        eventPlan.checkBadgeEvent();
     }
 
-    private void calculateTotalDiscounts() {
-        int totalDiscounts = 0;
-        Set<String> keySet = customer.getMyBenefits().keySet();
-
-        for (String key : keySet) {
-            if (!key.contains(EXCEPT_BENEFIT)) {
-                totalDiscounts += customer.getMyBenefits().get(key);
-            }
-        }
-
-        customer.setTotalDiscounts(totalDiscounts);
-    }
-
-    private void calculateTotalPriceAfterDiscount() {
-        int totalPrice = customer.getTotalPrice() - customer.getTotalDiscounts();
-        customer.setTotalPriceAfterDiscount(totalPrice);
-
-        outputView.printTotalPriceAfterDiscount(customer.getTotalPriceAfterDiscount());
+    private void showTotalPriceAfterDiscount() {
+        outputView.printTotalPriceAfterDiscount(order.getTotalOrderPriceAfterDiscount());
     }
 
     public void showCustomersEventBadge() {
-        outputView.printEventBadge(EVENT_MONTH, customer.getEventBadge());
+        outputView.printEventBadge(EVENT_MONTH, order.getBadgeEvent().getBadgeToGive());
     }
 
     private void showBenefitsHistory() {
