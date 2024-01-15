@@ -15,6 +15,7 @@ public class Order {
     Badge badgeEvent = new Badge();
     Gift giftsEvent = new Gift();
     int totalOrderPrice = 0;
+    int totalEventBenefits = 0;
 
     // 입력된 주문 데이터를 가지고 정상적인 주문들만 orders 리스트에 추가하는 로직
     public List<OrderCompletedMenu> ordersByInputData(String inputData) {
@@ -42,6 +43,10 @@ public class Order {
     public void setVisitDate(VisitDate visitDate) {
         this.visitDate = visitDate;
         discountEvent = new Discount(visitDate, this);
+    }
+
+    public VisitDate getVisitDate() {
+        return visitDate;
     }
 
     public int getDessertMenuOrderCount() {
@@ -75,6 +80,10 @@ public class Order {
         for (OrderCompletedMenu menu : orders) {
             totalOrderPrice += menu.getPricePerMenu();
         }
+    }
+
+    public void updateTotalBenefits(int benefits) {
+        totalEventBenefits += benefits;
     }
 
     public int getTotalOrderPrice() {
